@@ -7,9 +7,11 @@
 //
 
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 #include "CCController-desktop.h"
-#include "glfw3.h"
+//#include "glfw3.h"
+
+#include "CCGLViewImpl-desktop.h"
 #include "cocos2d.h"
 
 

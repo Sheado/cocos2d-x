@@ -8,7 +8,7 @@
 
 #ifndef cocos2d_libs_CCController_desktop_h
 #define cocos2d_libs_CCController_desktop_h
-#include "CCController.h"
+#include "base/CCController.h"
 
 NS_CC_BEGIN
 
