@@ -9,13 +9,17 @@
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 #include "CCController-desktop.h"
-//#include "glfw3.h"
 
 #include "CCGLViewImpl-desktop.h"
 #include "cocos2d.h"
 
 
 NS_CC_BEGIN
+
+void ControllerDesktop::setButtonMapping(const ButtonMapping* b)
+{
+	this->buttonMapping = b;
+}
 
 // TODO - controller - implement disconnect event
 // TODO - controller - add destructor and shutdown operations
@@ -36,101 +40,66 @@ void ControllerImpl::pollJoystick( int id )
     if( isPresent )
     {
         const char* name = glfwGetJoystickName(id);
-        Controller* controller = Controller::getControllerByTag(id);
-        if( controller == NULL )
+		ControllerDesktop* controller = (ControllerDesktop*)Controller::getControllerByTag(id);
+		const ButtonMapping* buttonMapping = NULL;
+		if (controller == NULL)
         {
             // It's a new controller being connected.
-            controller = new cocos2d::Controller();
+			controller = new cocos2d::ControllerDesktop();
             controller->_deviceId = id;
             controller->_deviceName = name;
             controller->setTag(id);
-            Controller::s_allController.push_back(controller);
+
+			// TODO - controller - handle more controller types
+			// TODO - controller - handle unknown controllers
+			const ButtonMapping* buttonMapping = &buttonMappingXBox360PC;
+			if (strstr(name, "3"))	// looking for the "3" in PS3
+				buttonMapping = &buttonMappingPS3;
+			controller->setButtonMapping(buttonMapping);
+			//controller->mapButton = mapButton;
+            
+			Controller::s_allController.push_back(controller);
             controller->onConnected();
+			log("Controller connected: %s", name);
         }
-        
-        const unsigned char* values = glfwGetJoystickButtons(id, &count);
-        for( int i = 0; i < count; ++i )
-        {
-            // TODO - controller - add more button mappings -
-            // button mappings - currently based off PS3 controller
-            int keyCode = i;
-            switch( i )
-            {
-                case 0:
-                    keyCode = Controller::Key::BUTTON_SELECT;
-                    break;
-                case 1:
-                    keyCode = Controller::Key::BUTTON_LEFT_THUMBSTICK;
-                    break;
-                case 2:
-                    keyCode = Controller::Key::BUTTON_RIGHT_THUMBSTICK;
-                    break;
-                case 3:
-                    keyCode = Controller::Key::BUTTON_PAUSE;
-                    break;
-                case 4:
-                    keyCode = Controller::Key::BUTTON_DPAD_UP;
-                    break;
-                case 5:
-                    keyCode = Controller::Key::BUTTON_DPAD_RIGHT;
-                    break;
-                case 6:
-                    keyCode = Controller::Key::BUTTON_DPAD_DOWN;
-                    break;
-                case 7:
-                    keyCode = Controller::Key::BUTTON_DPAD_LEFT;
-                    break;
-                // TODO - controller - treat these as axis instead of button
-                case 8:
-                    keyCode = Controller::Key::AXIS_LEFT_TRIGGER;
-                    break;
-                // TODO - controller - treat these as axis instead of button
-                case 9:
-                    keyCode = Controller::Key::AXIS_RIGHT_TRIGGER;
-                    break;
-                case 10:
-                    keyCode = Controller::Key::BUTTON_LEFT_SHOULDER;
-                    break;
-                case 11:
-                    keyCode = Controller::Key::BUTTON_RIGHT_SHOULDER;
-                    break;
-                case 12:
-                    keyCode = Controller::Key::BUTTON_Y;
-                    break;
-                case 13:
-                    keyCode = Controller::Key::BUTTON_B;
-                    break;
-                case 14:
-                    keyCode = Controller::Key::BUTTON_A;
-                    break;
-                case 15:
-                    keyCode = Controller::Key::BUTTON_X;
-                    break;
-                case 16:
-                    keyCode = Controller::Key::BUTTON_START;
-                    break;
-            }
-            controller->onButtonEvent(keyCode, values[i]?true:false, values[i], false);
-        }
+		buttonMapping = controller->buttonMapping;
+		
+		// TODO - controller - handle unknown controllers - need an optimized bounds check on values
+		const unsigned char* values = glfwGetJoystickButtons(id, &count);
 
-        // ps3: left: x,y right:x,y x (left)-1<=x<=1(right) (up)-1<=y<=1(down)
-        const float* axes = glfwGetJoystickAxes(id, &count);
-        // TODO - controller - need to map - 0 = leftX
-        if( count >= 4 )
-        {
-            int axisId = 0;
-            controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_X, axes[axisId], true);
+		// trying to avoid conditional statements here for optimization reasons
+		controller->onButtonEvent(Controller::Key::BUTTON_A, values[buttonMapping->BUTTON_A] ? true : false, values[buttonMapping->BUTTON_A], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_B, values[buttonMapping->BUTTON_B] ? true : false, values[buttonMapping->BUTTON_B], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_X, values[buttonMapping->BUTTON_X] ? true : false, values[buttonMapping->BUTTON_X], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_Y, values[buttonMapping->BUTTON_Y] ? true : false, values[buttonMapping->BUTTON_Y], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_DPAD_UP, values[buttonMapping->BUTTON_DPAD_UP] ? true : false, values[buttonMapping->BUTTON_DPAD_UP], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_DPAD_DOWN, values[buttonMapping->BUTTON_DPAD_DOWN] ? true : false, values[buttonMapping->BUTTON_DPAD_DOWN], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_DPAD_LEFT, values[buttonMapping->BUTTON_DPAD_LEFT] ? true : false, values[buttonMapping->BUTTON_DPAD_LEFT], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_DPAD_RIGHT, values[buttonMapping->BUTTON_DPAD_RIGHT] ? true : false, values[buttonMapping->BUTTON_DPAD_RIGHT], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_LEFT_SHOULDER, values[buttonMapping->BUTTON_LEFT_SHOULDER] ? true : false, values[buttonMapping->BUTTON_LEFT_SHOULDER], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_RIGHT_SHOULDER, values[buttonMapping->BUTTON_RIGHT_SHOULDER] ? true : false, values[buttonMapping->BUTTON_RIGHT_SHOULDER], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_LEFT_THUMBSTICK, values[buttonMapping->BUTTON_LEFT_THUMBSTICK] ? true : false, values[buttonMapping->BUTTON_LEFT_THUMBSTICK], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_RIGHT_THUMBSTICK, values[buttonMapping->BUTTON_RIGHT_THUMBSTICK] ? true : false, values[buttonMapping->BUTTON_RIGHT_THUMBSTICK], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_START, values[buttonMapping->BUTTON_START] ? true : false, values[buttonMapping->BUTTON_START], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_SELECT, values[buttonMapping->BUTTON_SELECT] ? true : false, values[buttonMapping->BUTTON_SELECT], false);
+		controller->onButtonEvent(Controller::Key::BUTTON_PAUSE, values[buttonMapping->BUTTON_PAUSE] ? true : false, values[buttonMapping->BUTTON_PAUSE], false);
 
-            axisId = 1;
-            controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_Y, axes[axisId], true);
+        // left: x,y right:x,y x (left)-1<=x<=1(right) (up)-1<=y<=1(down)
+		// TODO - controller - handle unknown controllers - need an optimized bounds check on axes
+		const float* axes = glfwGetJoystickAxes(id, &count);
+		//int LEFT_X = 0, LEFT_Y = 1, RIGHT_X = 2, RIGHT_Y = 3; // PS3
+		//int LEFT_X = 0, LEFT_Y = 1, RIGHT_X = 4, RIGHT_Y = 3; // XBox 360
+		controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_X, axes[buttonMapping->JOYSTICK_LEFT_X], true);
+		controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_Y, axes[buttonMapping->JOYSTICK_LEFT_Y], true);
+		controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_X, axes[buttonMapping->JOYSTICK_RIGHT_X], true);
+		controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_Y, axes[buttonMapping->JOYSTICK_RIGHT_Y], true);
 
-            axisId = 2;
-            controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_X, axes[axisId], true);
+		// NOTE: special case for xbox controller // TODO - controller - generalize special cases
+		// TODO - controller - regression test with PS3 controller
+		controller->onButtonEvent(Controller::Key::AXIS_LEFT_TRIGGER, axes[buttonMapping->AXIS_LEFT_TRIGGER] > 0.5 ? true : false, axes[buttonMapping->AXIS_LEFT_TRIGGER], false);
+		controller->onButtonEvent(Controller::Key::AXIS_RIGHT_TRIGGER, axes[buttonMapping->AXIS_RIGHT_TRIGGER] < -0.5 ? true : false, axes[buttonMapping->AXIS_RIGHT_TRIGGER], false);
 
-            axisId = 3;
-            controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_Y, axes[axisId], true);
-        }
-    }
+	}
 }
 
 
