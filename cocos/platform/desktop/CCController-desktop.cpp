@@ -64,9 +64,9 @@ void ControllerImpl::pollJoystick( int id )
         }
 		buttonMapping = controller->buttonMapping;
 		
-		// TODO - controller - handle unknown controllers - need an optimized bounds check on values
+		// TODO - controller - handle unknown controllers
 		const unsigned char* values = glfwGetJoystickButtons(id, &count);
-
+        // TODO - controller - efficiently check out of bounds on index
 		// trying to avoid conditional statements here for optimization reasons
 		controller->onButtonEvent(Controller::Key::BUTTON_A, values[buttonMapping->BUTTON_A] ? true : false, values[buttonMapping->BUTTON_A], false);
 		controller->onButtonEvent(Controller::Key::BUTTON_B, values[buttonMapping->BUTTON_B] ? true : false, values[buttonMapping->BUTTON_B], false);
@@ -85,20 +85,25 @@ void ControllerImpl::pollJoystick( int id )
 		controller->onButtonEvent(Controller::Key::BUTTON_PAUSE, values[buttonMapping->BUTTON_PAUSE] ? true : false, values[buttonMapping->BUTTON_PAUSE], false);
 
         // left: x,y right:x,y x (left)-1<=x<=1(right) (up)-1<=y<=1(down)
-		// TODO - controller - handle unknown controllers - need an optimized bounds check on axes
+		// TODO - controller - handle unknown controllers
+        // TODO - controller - efficiently check out of bounds on index
 		const float* axes = glfwGetJoystickAxes(id, &count);
-		//int LEFT_X = 0, LEFT_Y = 1, RIGHT_X = 2, RIGHT_Y = 3; // PS3
-		//int LEFT_X = 0, LEFT_Y = 1, RIGHT_X = 4, RIGHT_Y = 3; // XBox 360
 		controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_X, axes[buttonMapping->JOYSTICK_LEFT_X], true);
 		controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_Y, axes[buttonMapping->JOYSTICK_LEFT_Y], true);
 		controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_X, axes[buttonMapping->JOYSTICK_RIGHT_X], true);
 		controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_Y, axes[buttonMapping->JOYSTICK_RIGHT_Y], true);
-
-		// NOTE: special case for xbox controller // TODO - controller - generalize special cases
-		// TODO - controller - regression test with PS3 controller
-		controller->onButtonEvent(Controller::Key::AXIS_LEFT_TRIGGER, axes[buttonMapping->AXIS_LEFT_TRIGGER] > 0.5 ? true : false, axes[buttonMapping->AXIS_LEFT_TRIGGER], false);
-		controller->onButtonEvent(Controller::Key::AXIS_RIGHT_TRIGGER, axes[buttonMapping->AXIS_RIGHT_TRIGGER] < -0.5 ? true : false, axes[buttonMapping->AXIS_RIGHT_TRIGGER], false);
-
+        
+		// TODO - controller - find a better way to handle analog vs digital discrepancies across different controllers
+        if( buttonMapping->isTriggerAnalog )
+        {
+            controller->onButtonEvent(Controller::Key::AXIS_LEFT_TRIGGER, axes[buttonMapping->AXIS_LEFT_TRIGGER] > 0.5 ? true : false, axes[buttonMapping->AXIS_LEFT_TRIGGER], false);
+            controller->onButtonEvent(Controller::Key::AXIS_RIGHT_TRIGGER, axes[buttonMapping->AXIS_RIGHT_TRIGGER] < -0.5 ? true : false, axes[buttonMapping->AXIS_RIGHT_TRIGGER], false);
+        }
+        else
+        {
+            controller->onButtonEvent(Controller::Key::AXIS_LEFT_TRIGGER, values[buttonMapping->AXIS_LEFT_TRIGGER] ? true : false, values[buttonMapping->AXIS_LEFT_TRIGGER], false);
+            controller->onButtonEvent(Controller::Key::AXIS_RIGHT_TRIGGER, values[buttonMapping->AXIS_RIGHT_TRIGGER] ? true : false, values[buttonMapping->AXIS_RIGHT_TRIGGER], false);
+        }
 	}
 }
 

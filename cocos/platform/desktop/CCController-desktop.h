@@ -47,26 +47,29 @@ struct ButtonMapping
 
 	int BUTTON_PAUSE;
 	int KEY_MAX;
+    bool isTriggerAnalog;
 };
 
+static const int BUTTON_MAPPING_INDEX_UNSPECIFIED = 0;
+
 static const ButtonMapping buttonMappingPS3{
-	10000, /*JOYSTICK_LEFT_X,*/
-	10001, /*JOYSTICK_LEFT_Y,*/
-	10004, /*JOYSTICK_RIGHT_X,*/
-	10003, /*JOYSTICK_RIGHT_Y,*/
+	0, /*JOYSTICK_LEFT_X,*/
+	1, /*JOYSTICK_LEFT_Y,*/
+	2, /*JOYSTICK_RIGHT_X,*/
+	3, /*JOYSTICK_RIGHT_Y,*/
 
 	14, /*BUTTON_A,*/
 	13, /*BUTTON_B,*/
-	1000, /*BUTTON_C,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_C,*/
 	15, /*BUTTON_X,*/
 	12, /*BUTTON_Y,*/
-	1000, /*BUTTON_Z,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_Z,*/
 
 	4, /*BUTTON_DPAD_UP,*/
 	6, /*BUTTON_DPAD_DOWN,*/
 	7, /*BUTTON_DPAD_LEFT,*/
 	5, /*BUTTON_DPAD_RIGHT,*/
-	1000, /*BUTTON_DPAD_CENTER,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_DPAD_CENTER,*/
 
 	10, /*BUTTON_LEFT_SHOULDER,*/
 	11, /*BUTTON_RIGHT_SHOULDER,*/
@@ -81,7 +84,8 @@ static const ButtonMapping buttonMappingPS3{
 	0, /*BUTTON_SELECT,*/
 
 	3, /*BUTTON_PAUSE,*/
-	1000 /*KEY_MAX*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*KEY_MAX*/
+    false /*isTriggerAnalog*/
 };
 
 static const ButtonMapping buttonMappingXBox360PC{
@@ -92,16 +96,16 @@ static const ButtonMapping buttonMappingXBox360PC{
 
 	0, /*BUTTON_A,*/
 	1, /*BUTTON_B,*/
-	1000, /*BUTTON_C,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_C,*/
 	2, /*BUTTON_X,*/
 	3, /*BUTTON_Y,*/
-	1000, /*BUTTON_Z,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_Z,*/
 
 	10, /*BUTTON_DPAD_UP,*/
 	12, /*BUTTON_DPAD_DOWN,*/
 	13, /*BUTTON_DPAD_LEFT,*/
 	11, /*BUTTON_DPAD_RIGHT,*/
-	1000, /*BUTTON_DPAD_CENTER,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_DPAD_CENTER,*/
 
 	4, /*BUTTON_LEFT_SHOULDER,*/
 	5, /*BUTTON_RIGHT_SHOULDER,*/
@@ -116,7 +120,8 @@ static const ButtonMapping buttonMappingXBox360PC{
 	6, /*BUTTON_SELECT,*/
 
 	7, /*BUTTON_PAUSE,*/
-	1000 /*KEY_MAX*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*KEY_MAX*/
+    true /*isTriggerAnalog*/
 };
 
 class CC_DLL ControllerDesktop : public Controller
