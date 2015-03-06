@@ -3190,6 +3190,9 @@
     <ClInclude Include="..\base\CCEventListenerController.h">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\cocos2d-x-sheado-git\cocos\base\CCGameController.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\math\Mat4.inl">
