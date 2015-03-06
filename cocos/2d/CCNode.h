@@ -1525,6 +1525,7 @@ public:
 
 
 #if CC_USE_PHYSICS
+    fjdkalfdsjl
     /**
      *   set the PhysicsBody that let the sprite effect with physics
      * @note This method will set anchor point to Vec2::ANCHOR_MIDDLE if body not null, and you cann't change anchor point if node has a physics body.
