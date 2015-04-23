@@ -130,6 +130,7 @@ public:
     virtual Rect getBoundingBox() const override;
 
     virtual std::string getDescription() const override;
+    virtual void setGlobalZOrder(float globalZOrder) override;
 #if CC_LABELBMFONT_DEBUG_DRAW
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
 #endif

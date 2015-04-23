@@ -206,6 +206,11 @@ const Size& LabelBMFont::getContentSize() const
     return _contentSize;
 }
 
+void LabelBMFont::setGlobalZOrder(float z)
+{
+    _label->setGlobalZOrder(z);
+}
+
 Rect LabelBMFont::getBoundingBox() const
 {
     return Node::getBoundingBox();
