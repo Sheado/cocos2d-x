@@ -38,6 +38,9 @@ THE SOFTWARE.
 #include "renderer/CCRenderer.h"
 #include "base/CCDirector.h"
 
+#include "3d/CCAABB.h"
+#include "2d/CCCamera.h"
+
 #include "deprecated/CCString.h"
 
 
@@ -584,13 +587,16 @@ void Sprite::updateTransform(void)
 }
 
 // draw
-
 void Sprite::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
 #if CC_USE_CULLING
+    // sheado - modified culling to support any camera
+    AABB cPositionAABB = AABB(Vec3::ZERO, Vec3(_contentSize.width, _contentSize.height, _positionZ));
+    cPositionAABB.transform(getNodeToWorldTransform());
+    // camera clipping
+    _insideBounds = Camera::getVisitingCamera()->isVisibleInFrustum(&cPositionAABB);
     // Don't do calculate the culling if the transform was not updated
-    _insideBounds = (flags & FLAGS_TRANSFORM_DIRTY) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
-
+    //    _insideBounds = (flags & FLAGS_TRANSFORM_DIRTY) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
     if(_insideBounds)
 #endif
     {
