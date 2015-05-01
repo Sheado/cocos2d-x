@@ -44,6 +44,9 @@ THE SOFTWARE.
 
 #include "deprecated/CCString.h"
 
+#include "cocos2d.h"
+using namespace cocos2d;
+
 NS_CC_BEGIN
 
 ParticleSystemQuad::ParticleSystemQuad()
@@ -369,6 +372,18 @@ void ParticleSystemQuad::postStep()
 void ParticleSystemQuad::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
     CCASSERT( _particleIdx == 0 || _particleIdx == _particleCount, "Abnormal error in particle quad");
+
+    //// sheado - added culling - TODO - optimize and improve
+    float w = _posVar.x + _startSize + _startSizeVar;
+    float h = _posVar.y + _startSize + _startSizeVar;
+    AABB cPositionAABB = AABB(Vec3(-w,-h,_positionZ),
+                              Vec3(w,h,_positionZ));
+    cPositionAABB.transform(getNodeToWorldTransform());
+    // camera clipping
+    bool _insideBounds = Camera::getVisitingCamera()->isVisibleInFrustum(&cPositionAABB);
+    if( !_insideBounds )
+        return;
+
     //quad command
     if(_particleIdx > 0)
     {
