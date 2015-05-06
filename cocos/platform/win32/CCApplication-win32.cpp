@@ -90,7 +90,7 @@ int Application::run()
             nLast.QuadPart = nNow.QuadPart - (nNow.QuadPart % _animationInterval.QuadPart);
             
             director->mainLoop();
-            glview->pollEvents();
+			// sheado - removed call to pollEvents here since it's already being called elsewhere
         }
         else
         {
