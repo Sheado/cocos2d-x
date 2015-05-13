@@ -265,9 +265,9 @@ To enable set it to a value different than 0. Disabled by default.
 #endif
 
 /** Use physics integration API */
-#ifndef CC_USE_PHYSICS
-#define CC_USE_PHYSICS 1
-#endif
+//#ifndef CC_USE_PHYSICS
+//#define CC_USE_PHYSICS 1
+//#endif
 
 /** Use culling or not */
 #ifndef CC_USE_CULLING
