@@ -660,8 +660,10 @@ void ParticleSystem::update(float dt)
 {
     CC_PROFILER_START_CATEGORY(kProfilerCategoryParticles , "CCParticleSystem - update");
 
+    _particleIdx = 0;   // sheado - moved this up so that draw assert can pass when we don't update
     // sheado - update culling - don't start culling until at least one particle has lived a complete life cycle
-    if( hasCompletedFirstCycle )
+    // currently doesn't support relative positioning
+    if( hasCompletedFirstCycle && _positionType != PositionType::RELATIVE )
     {
         // don't update if more than a screen away
         Size s = Director::getInstance()->getVisibleSize();
@@ -670,7 +672,9 @@ void ParticleSystem::update(float dt)
         // TODO - we assume default camera!
         bool _insideBounds = Camera::getDefaultCamera()->isVisibleInFrustum(&cPositionAABB);
         if( !_insideBounds )
+        {
             return;
+        }
     }
 
     if (_isActive && _emissionRate)
@@ -694,8 +698,6 @@ void ParticleSystem::update(float dt)
             this->stopSystem();
         }
     }
-
-    _particleIdx = 0;
 
     Vec2 currentPosition = Vec2::ZERO;
     if (_positionType == PositionType::FREE)
