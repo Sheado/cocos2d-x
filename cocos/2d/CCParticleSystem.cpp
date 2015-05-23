@@ -54,6 +54,7 @@ THE SOFTWARE.
 #include "renderer/CCTextureCache.h"
 #include "deprecated/CCString.h"
 #include "platform/CCFileUtils.h"
+#include "2d/CCCamera.h"
 
 using namespace std;
 
@@ -659,6 +660,19 @@ void ParticleSystem::update(float dt)
 {
     CC_PROFILER_START_CATEGORY(kProfilerCategoryParticles , "CCParticleSystem - update");
 
+    // sheado - update culling - don't start culling until at least one particle has lived a complete life cycle
+    if( hasCompletedFirstCycle )
+    {
+        // don't update if more than a screen away
+        Size s = Director::getInstance()->getVisibleSize();
+        AABB cPositionAABB(Vec3(_position.x-s.width,_position.y-s.height,_positionZ),Vec3(_position.x+s.width,_position.y+s.height,_positionZ));
+        cPositionAABB.transform(getNodeToWorldTransform());
+        // TODO - we assume default camera!
+        bool _insideBounds = Camera::getDefaultCamera()->isVisibleInFrustum(&cPositionAABB);
+        if( !_insideBounds )
+            return;
+    }
+
     if (_isActive && _emissionRate)
     {
         float rate = 1.0f / _emissionRate;
@@ -795,6 +809,17 @@ void ParticleSystem::update(float dt)
                     newPos.y+=_position.y;
                 }
 
+                // sheado - bound detection for culling
+                if( newPos.x < left )
+                    left = newPos.x;
+                if( newPos.x > right )
+                    right = newPos.x;
+                if( newPos.y < bottom )
+                    bottom = newPos.y;
+                if( newPos.y > top )
+                    top = newPos.y;
+                
+                
                 updateQuadWithParticle(p, newPos);
                 //updateParticleImp(self, updateParticleSel, p, newPos);
 
@@ -804,6 +829,7 @@ void ParticleSystem::update(float dt)
             else 
             {
                 // life < 0
+                hasCompletedFirstCycle = true;
                 int currentIndex = p->atlasIndex;
                 if( _particleIdx != _particleCount-1 )
                 {

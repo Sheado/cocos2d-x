@@ -562,6 +562,10 @@ protected:
      @since v0.8
      */
     PositionType _positionType;
+    
+    // sheado - bound detection for culling
+    float left = 9999999, top = 0, right = 0, bottom = 9999999;
+    bool hasCompletedFirstCycle = false;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(ParticleSystem);

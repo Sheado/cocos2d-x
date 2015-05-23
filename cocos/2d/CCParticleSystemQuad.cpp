@@ -373,17 +373,20 @@ void ParticleSystemQuad::draw(Renderer *renderer, const Mat4 &transform, uint32_
 {
     CCASSERT( _particleIdx == 0 || _particleIdx == _particleCount, "Abnormal error in particle quad");
 
-    //// sheado - added culling - TODO - optimize and improve
-    float w = _posVar.x + _startSize + _startSizeVar;
-    float h = _posVar.y + _startSize + _startSizeVar;
-    AABB cPositionAABB = AABB(Vec3(-w,-h,_positionZ),
-                              Vec3(w,h,_positionZ));
+    //// sheado - added culling - don't draw when offscreen
+    AABB cPositionAABB(Vec3(left,bottom,_positionZ),Vec3(right,top,_positionZ));
     cPositionAABB.transform(getNodeToWorldTransform());
+    //    // TODO - sheado - debugging - draw bounding box
+    //    removeChildByTag(56546);
+    //    DrawNode* d = DrawNode::create();
+    //    d->drawRect(Vec2(left,top), Vec2(right,bottom), Color4F(1,1,1,1));
+    //    addChild(d,0, 56546);
+    
     // camera clipping
     bool _insideBounds = Camera::getVisitingCamera()->isVisibleInFrustum(&cPositionAABB);
     if( !_insideBounds )
         return;
-
+    
     //quad command
     if(_particleIdx > 0)
     {
