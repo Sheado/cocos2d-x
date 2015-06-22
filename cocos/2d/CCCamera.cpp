@@ -185,7 +185,8 @@ bool Camera::initDefault()
         case Director::Projection::_3D:
         {
             float zeye = Director::getInstance()->getZEye();
-            initPerspective(60, (GLfloat)size.width / size.height, 10, zeye + size.height / 2.0f);
+            float farPlaneFactor = 20.0f; // TODO - sheado - added this to extend the far plane - unfortunately this is the easiest way to modify the default camera at the moment - TODO - make this configurable on creation
+            initPerspective(60, (GLfloat)size.width / size.height, 10, farPlaneFactor*zeye + size.height / 2.0f);
             Vec3 eye(size.width/2, size.height/2.0f, zeye), center(size.width/2, size.height/2, 0.0f), up(0.0f, 1.0f, 0.0f);
             setPosition3D(eye);
             lookAt(center, up);
