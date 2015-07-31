@@ -53,6 +53,9 @@ public:
     int getKeyCode() const{ return _keyCode; }
     void setKeyCode(int keyCode) { _keyCode = keyCode;}
 
+    /** Starts propagation for current event */
+    inline void startPropagation() { _isStopped = false; };
+    
     void setConnectStatus(bool isConnected) {_isConnected = isConnected;}
     bool isConnected() const { return _isConnected; }
     

@@ -97,6 +97,7 @@ void Controller::onButtonEvent(int keyCode, bool isPressed, float value, bool is
     _allKeyStatus[keyCode].isAnalog = isAnalog;
 
     _keyEvent->setKeyCode(keyCode);
+    _keyEvent->startPropagation();
     _eventDispatcher->dispatchEvent(_keyEvent);
 }
 
@@ -107,6 +108,7 @@ void Controller::onAxisEvent(int axisCode, float value, bool isAnalog)
     _allKeyStatus[axisCode].isAnalog = isAnalog;
 
     _axisEvent->setKeyCode(axisCode);
+    _axisEvent->startPropagation();
     _eventDispatcher->dispatchEvent(_axisEvent);
 }
 
