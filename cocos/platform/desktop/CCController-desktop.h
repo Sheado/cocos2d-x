@@ -119,7 +119,7 @@ static const ButtonMapping buttonMappingXBox360PC{
 	7, /*BUTTON_START,*/
 	6, /*BUTTON_SELECT,*/
 
-	7, /*BUTTON_PAUSE,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_PAUSE,*/
 	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*KEY_MAX*/
     true /*isTriggerAnalog*/
 };
