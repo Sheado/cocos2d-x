@@ -50,7 +50,7 @@ struct ButtonMapping
     bool isTriggerAnalog;
 };
 
-static const int BUTTON_MAPPING_INDEX_UNSPECIFIED = 0;
+static const int BUTTON_MAPPING_INDEX_UNSPECIFIED = -1;
 
 static const ButtonMapping buttonMappingPS3{
 	0, /*JOYSTICK_LEFT_X,*/

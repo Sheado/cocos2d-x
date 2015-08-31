@@ -82,7 +82,9 @@ void ControllerImpl::pollJoystick( int id )
 		controller->onButtonEvent(Controller::Key::BUTTON_RIGHT_THUMBSTICK, values[buttonMapping->BUTTON_RIGHT_THUMBSTICK] ? true : false, values[buttonMapping->BUTTON_RIGHT_THUMBSTICK], false);
 		controller->onButtonEvent(Controller::Key::BUTTON_START, values[buttonMapping->BUTTON_START] ? true : false, values[buttonMapping->BUTTON_START], false);
 		controller->onButtonEvent(Controller::Key::BUTTON_SELECT, values[buttonMapping->BUTTON_SELECT] ? true : false, values[buttonMapping->BUTTON_SELECT], false);
-		controller->onButtonEvent(Controller::Key::BUTTON_PAUSE, values[buttonMapping->BUTTON_PAUSE] ? true : false, values[buttonMapping->BUTTON_PAUSE], false);
+		// TODO - perform this check on all buttons
+		if (buttonMapping->BUTTON_SELECT != BUTTON_MAPPING_INDEX_UNSPECIFIED )
+			controller->onButtonEvent(Controller::Key::BUTTON_PAUSE, values[buttonMapping->BUTTON_PAUSE] ? true : false, values[buttonMapping->BUTTON_PAUSE], false);
 
         // left: x,y right:x,y x (left)-1<=x<=1(right) (up)-1<=y<=1(down)
 		// TODO - controller - handle unknown controllers
