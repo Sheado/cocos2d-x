@@ -88,6 +88,42 @@ static const ButtonMapping buttonMappingPS3{
     false /*isTriggerAnalog*/
 };
 
+static const ButtonMapping buttonMappingXBoxOne{
+	0, /*JOYSTICK_LEFT_X,*/
+	1, /*JOYSTICK_LEFT_Y,*/
+	5, /*JOYSTICK_RIGHT_X,*/
+	4, /*JOYSTICK_RIGHT_Y,*/
+
+	0, /*BUTTON_A,*/
+	1, /*BUTTON_B,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_C,*/
+	2, /*BUTTON_X,*/
+	3, /*BUTTON_Y,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_Z,*/
+
+	10, /*BUTTON_DPAD_UP,*/
+	12, /*BUTTON_DPAD_DOWN,*/
+	13, /*BUTTON_DPAD_LEFT,*/
+	11, /*BUTTON_DPAD_RIGHT,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_DPAD_CENTER,*/
+
+	4, /*BUTTON_LEFT_SHOULDER,*/
+	5, /*BUTTON_RIGHT_SHOULDER,*/
+
+	2, /*AXIS_LEFT_TRIGGER,*/		// defaulting to -1 on xbox one controller
+	3, /*AXIS_RIGHT_TRIGGER,*/		// defaulting to -1 on xbox one controller
+
+	8, /*BUTTON_LEFT_THUMBSTICK,*/
+	9, /*BUTTON_RIGHT_THUMBSTICK,*/
+
+	7, /*BUTTON_START,*/
+	6, /*BUTTON_SELECT,*/
+
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_PAUSE,*/
+	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*KEY_MAX*/
+    true /*isTriggerAnalog*/
+};
+
 static const ButtonMapping buttonMappingXBox360PC{
 	0, /*JOYSTICK_LEFT_X,*/
 	1, /*JOYSTICK_LEFT_Y,*/
@@ -121,13 +157,17 @@ static const ButtonMapping buttonMappingXBox360PC{
 
 	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*BUTTON_PAUSE,*/
 	BUTTON_MAPPING_INDEX_UNSPECIFIED, /*KEY_MAX*/
-    true /*isTriggerAnalog*/
+	true /*isTriggerAnalog*/
 };
 
 class CC_DLL ControllerDesktop : public Controller
 {
 private:
 	const ButtonMapping* buttonMapping = NULL;
+	/**
+	 * xbox 360 left/right trigger share same axis  
+	 */
+	bool isSharedTriggerAxis = true; 
 public:
 	void setButtonMapping(const ButtonMapping* b);
 	

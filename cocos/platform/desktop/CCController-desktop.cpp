@@ -53,14 +53,28 @@ void ControllerImpl::pollJoystick( int id )
 			// TODO - controller - handle more controller types
 			// TODO - controller - handle unknown controllers
 			const ButtonMapping* buttonMapping = &buttonMappingXBox360PC;
+			bool isXboxController = true;
 			if (strstr(name, "3"))	// looking for the "3" in PS3
+			{
 				buttonMapping = &buttonMappingPS3;
+				isXboxController = false;
+			}
+			if (isXboxController)
+			{
+				glfwGetJoystickAxes(id, &count);
+				// xbox 360 controller has 5 axes, xbox one controller has 6
+				if (count > 5)
+				{
+					buttonMapping = &buttonMappingXBoxOne;
+					controller->isSharedTriggerAxis = false;
+				}
+			}
 			controller->setButtonMapping(buttonMapping);
-			//controller->mapButton = mapButton;
             
 			Controller::s_allController.push_back(controller);
             controller->onConnected();
-			log("Controller connected: %s", name);
+
+			log("Controller connected: %s", name );
         }
 		buttonMapping = controller->buttonMapping;
 		
@@ -98,8 +112,16 @@ void ControllerImpl::pollJoystick( int id )
 		// TODO - controller - find a better way to handle analog vs digital discrepancies across different controllers
         if( buttonMapping->isTriggerAnalog )
         {
-            controller->onButtonEvent(Controller::Key::AXIS_LEFT_TRIGGER, axes[buttonMapping->AXIS_LEFT_TRIGGER] > 0.5 ? true : false, axes[buttonMapping->AXIS_LEFT_TRIGGER], false);
-            controller->onButtonEvent(Controller::Key::AXIS_RIGHT_TRIGGER, axes[buttonMapping->AXIS_RIGHT_TRIGGER] < -0.5 ? true : false, axes[buttonMapping->AXIS_RIGHT_TRIGGER], false);
+			if (controller->isSharedTriggerAxis)
+			{
+				controller->onButtonEvent(Controller::Key::AXIS_LEFT_TRIGGER, axes[buttonMapping->AXIS_LEFT_TRIGGER] > 0.5f ? true : false, axes[buttonMapping->AXIS_LEFT_TRIGGER], false);
+				controller->onButtonEvent(Controller::Key::AXIS_RIGHT_TRIGGER, axes[buttonMapping->AXIS_RIGHT_TRIGGER] < -0.5f ? true : false, axes[buttonMapping->AXIS_RIGHT_TRIGGER], false);
+			}
+			else
+			{
+				controller->onButtonEvent(Controller::Key::AXIS_LEFT_TRIGGER, axes[buttonMapping->AXIS_LEFT_TRIGGER] > 0.0f ? true : false, axes[buttonMapping->AXIS_LEFT_TRIGGER], false);
+				controller->onButtonEvent(Controller::Key::AXIS_RIGHT_TRIGGER, axes[buttonMapping->AXIS_RIGHT_TRIGGER] > 0.0f ? true : false, axes[buttonMapping->AXIS_RIGHT_TRIGGER], false);
+			}
         }
         else
         {
