@@ -403,6 +403,14 @@ bool GLViewImpl::initWithFullScreen(const std::string& viewName)
         return false;
 
     const GLFWvidmode* videoMode = glfwGetVideoMode(_monitor);
+
+    // sheado - removed these window hints so that fullscreen config is closer to desktop config
+//    glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
+//    glfwWindowHint(GLFW_RED_BITS, videoMode->redBits);
+//    glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
+//    glfwWindowHint(GLFW_GREEN_BITS, videoMode->greenBits);
+//    
+    
     return initWithRect(viewName, Rect(0, 0, videoMode->width, videoMode->height), 1.0f);
 }
 
@@ -413,12 +421,13 @@ bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmo
     if (nullptr == _monitor)
         return false;
     
+    // sheado - removed these window hints so that fullscreen config is closer to desktop config
     //These are soft contraints. If the video mode is retrieved at runtime, the resulting window and context should match these exactly. If invalid attribs are passed (eg. from an outdated cache), window creation will NOT fail but the actual window/context may differ.
-    glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate);
-    glfwWindowHint(GLFW_RED_BITS, videoMode.redBits);
-    glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits);
-    glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits);
-    
+//    glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate);
+//    glfwWindowHint(GLFW_RED_BITS, videoMode.redBits);
+//    glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits);
+//    glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits);
+
     return initWithRect(viewname, Rect(0, 0, videoMode.width, videoMode.height), 1.0f);
 }
 
