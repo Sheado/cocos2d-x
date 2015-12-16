@@ -37,8 +37,7 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "base/ccUTF8.h"
 #include "base/CCGameController.h"
-#include "CCController-desktop.h"
-
+#include <SDL.h>
 
 NS_CC_BEGIN
 
@@ -264,7 +263,6 @@ static keyCodeItem g_keyCodeStructArray[] = {
 // implement GLViewImpl
 //////////////////////////////////////////////////////////////////////////
 
-
 GLViewImpl::GLViewImpl()
 : _captured(false)
 , _supportTouch(false)
@@ -288,6 +286,13 @@ GLViewImpl::GLViewImpl()
 
     glfwSetErrorCallback(GLFWEventHandler::onGLFWError);
     glfwInit();
+
+	// init SDL controller support
+	if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0)
+	{
+		log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+	}
+	controllerManager.init();
 }
 
 GLViewImpl::~GLViewImpl()
@@ -466,9 +471,7 @@ void GLViewImpl::pollEvents()
     if( _mainWindow )
     {
         glfwPollEvents();
-        // TODO - controller - make this optional and give the option for how many controllers to check for
-        ControllerImpl::pollJoystick(GLFW_JOYSTICK_1);
-        ControllerImpl::pollJoystick(GLFW_JOYSTICK_2);
+		controllerManager.pollJoysticks();
     }
 }
 

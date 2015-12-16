@@ -29,6 +29,8 @@ THE SOFTWARE.
 #include "base/CCRef.h"
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
+#include "CCController-desktop.h"
+
 #include "glfw3.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
@@ -50,6 +52,7 @@ THE SOFTWARE.
 #endif
 #include "glfw3native.h"
 #endif // #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+
 
 NS_CC_BEGIN
 
@@ -153,6 +156,7 @@ protected:
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(GLViewImpl);
+	ControllerImpl controllerManager;
 };
 
 NS_CC_END   // end of namespace   cocos2d

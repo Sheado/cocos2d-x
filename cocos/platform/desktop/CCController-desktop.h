@@ -11,6 +11,11 @@
 #include "base/CCController.h"
 #include <functional>
 
+// forward declarations
+struct _SDL_GameController;
+typedef struct _SDL_GameController SDL_GameController;
+
+
 NS_CC_BEGIN
 
 struct ButtonMapping
@@ -180,11 +185,16 @@ public:
 class ControllerImpl
 {
 public:
-    ControllerImpl(Controller* controller);
-    static void pollJoystick( int id );
+    ControllerImpl();
+	void pollJoysticks();
+	void init();
+	//static void pollJoystick(int id);
 
 private:
-    Controller* _controller;
+	SDL_GameController* controllers[2];
+
+	void pollJoystick( int id, SDL_GameController* sdlController );
+
 };
 
 NS_CC_END
