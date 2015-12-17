@@ -185,7 +185,8 @@ public:
 class ControllerImpl
 {
 public:
-    ControllerImpl();
+	ControllerImpl();
+	~ControllerImpl();
 	void pollJoysticks();
 	void init();
 	//static void pollJoystick(int id);

@@ -31,6 +31,20 @@ ControllerImpl::ControllerImpl()
 {
 }
 
+ControllerImpl::~ControllerImpl()
+{
+	for (int i = 0; i < 2; ++i)
+	{
+		if (controllers[i])
+		{
+			SDL_GameControllerClose(controllers[i]);
+			controllers[i] = NULL;
+		}
+	}
+	// for convenience, putting this here. Move to CCGLViewImpl-desktop if more features are required and make sure destruct order is correct
+	SDL_Quit();
+}
+
 /**
  * supporting just 2 controllers for now
  */
@@ -44,9 +58,10 @@ void ControllerImpl::init()
 	{
 		if (SDL_IsGameController(i))
 		{
-			controllers[controllerIndex] = SDL_GameControllerOpen(i);
-			//log("Opened Joystick %d\n", i);
-			//log("Name: %s\n", SDL_GameControllerName(controllers[controllerIndex]));
+			SDL_GameController *controller = SDL_GameControllerOpen(i);
+			controllers[controllerIndex] = controller;
+			log("Opened Joystick %d on %d\n", i, controllerIndex);
+			log("Name: %s\n", SDL_GameControllerName(controller));
 			if (++controllerIndex >= 2)
 				break;
 		}
@@ -74,6 +89,9 @@ void ControllerImpl::pollJoysticks()
 
 void ControllerImpl::pollJoystick(int id, SDL_GameController* sdlController)
 {
+	if (!SDL_GameControllerGetAttached(sdlController))
+		return;
+
 	ControllerDesktop* controller = (ControllerDesktop*)Controller::getControllerByTag(id);
 	const ButtonMapping* buttonMapping = &buttonMappingXBoxOne;		// TODO - deprecate button mapping since we're using sdl controller now?
 	if (controller == NULL)
@@ -88,8 +106,6 @@ void ControllerImpl::pollJoystick(int id, SDL_GameController* sdlController)
 		controller->setButtonMapping(buttonMapping);
 		Controller::s_allController.push_back(controller);
 		controller->onConnected();
-		log("Controller connected: %s", name);
-
 	}
 	buttonMapping = controller->buttonMapping;
 
