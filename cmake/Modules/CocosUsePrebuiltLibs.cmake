@@ -6,6 +6,11 @@ set(_chipmunk_inc chipmunk.h)
 set(_chipmunk_inc_paths chipmunk)
 set(_chipmunk_libs chipmunk libchipmunk)
 
+set(_sdl_prefix SDL)
+set(_sdl_inc SDL.h)
+set(_sdl_inc_paths sdl)
+set(_sdl_libs SDL2 libSDL2 SDL2 SDL2main)
+
 set(_curl_inc curl/curl.h)
 set(_curl_libs crypto ssl libeay32 ssleay32 curl libcurl_imp libcurl)
 
@@ -73,6 +78,7 @@ set(all_prebuilt_libs
   tiff
   webp
   websockets
+  sdl
 )
 
 
