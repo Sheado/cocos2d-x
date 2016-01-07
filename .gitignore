@@ -122,7 +122,6 @@ project.properties
 /external/curl/
 /external/edtaa3func/
 /external/freetype2/
-/external/glfw3/
 /external/jpeg/
 /external/json/
 /external/linux-specific/
