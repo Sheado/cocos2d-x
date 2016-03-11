@@ -153,14 +153,14 @@ if(MINGW)
   endif()
 endif()
 
-# architecture
-if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+# architecture - Sheado - modified to force to 64-bit
+#if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   set(ARCH_DIR "64-bit")
-elseif ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
-  set(ARCH_DIR "32-bit")
-else()
-  message( FATAL_ERROR "Unsupported architecture, CMake will exit" )
-endif()
+#elseif ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
+#  set(ARCH_DIR "32-bit")
+#else()
+#  message( FATAL_ERROR "Unsupported architecture, CMake will exit" )
+#endif()
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos
