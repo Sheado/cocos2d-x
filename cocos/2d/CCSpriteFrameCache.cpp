@@ -111,6 +111,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
         SpriteFrame* spriteFrame = _spriteFrames.at(spriteFrameName);
         if (spriteFrame)
         {
+            log( "WARNING: Duplicate sprite name. Skipping: %s", spriteFrameName.data() );
             continue;
         }
         
