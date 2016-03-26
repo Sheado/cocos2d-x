@@ -85,18 +85,35 @@ int Application::run()
     while(!glview->windowShouldClose())
     {
         QueryPerformanceCounter(&nNow);
-        if (nNow.QuadPart - nLast.QuadPart > _animationInterval.QuadPart)
+        if (nNow.QuadPart - nLast.QuadPart >= _animationInterval.QuadPart)
         {
-            nLast.QuadPart = nNow.QuadPart - (nNow.QuadPart % _animationInterval.QuadPart);
+			nLast.QuadPart = nNow.QuadPart - (nNow.QuadPart % _animationInterval.QuadPart);
             
             director->mainLoop();
 			// sheado - removed call to pollEvents here since it's already being called elsewhere
         }
         else
         {
-            Sleep(1);
-        }
-    }
+				Sleep( 1 );
+
+				// TODO - sheado - optimize - consider sleeping by the exact amount
+				//LARGE_INTEGER nFreq, ltime;
+				//QueryPerformanceFrequency(&nFreq);
+				//LARGE_INTEGER expectedTime = _animationInterval;
+				//expectedTime.QuadPart *= 1000;
+				//expectedTime.QuadPart /= nFreq.QuadPart;
+				//ltime.QuadPart = _animationInterval.QuadPart - (nNow.QuadPart - nLast.QuadPart);
+				//ltime.QuadPart *= 1000;
+				//ltime.QuadPart /= nFreq.QuadPart;
+				//int sleepDuration = ltime.QuadPart;
+				//if (sleepDuration < 1)
+				//	sleepDuration = 1;
+				//if (sleepDuration > 17)
+				//	sleepDuration = 17;
+				//log("sleeping: %d", sleepDuration );
+				//Sleep(sleepDuration);
+		}
+	}
 
     // Director should still do a cleanup if the window was closed manually.
     if (glview->isOpenGLReady())
