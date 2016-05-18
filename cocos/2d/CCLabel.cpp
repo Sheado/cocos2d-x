@@ -37,6 +37,8 @@
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
 #include "deprecated/CCString.h"
+#include "3d/CCAABB.h"
+#include "2d/CCCamera.h"
 
 NS_CC_BEGIN
 
@@ -898,7 +900,11 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     // Don't do calculate the culling if the transform was not updated
     bool transformUpdated = flags & FLAGS_TRANSFORM_DIRTY;
 #if CC_USE_CULLING
-    _insideBounds = transformUpdated ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
+    // sheado - modified culling to support any camera
+    AABB cPositionAABB = AABB(Vec3::ZERO, Vec3(_contentSize.width, _contentSize.height, _positionZ));
+    cPositionAABB.transform(getNodeToWorldTransform());
+    _insideBounds = Camera::getVisitingCamera()->isVisibleInFrustum(&cPositionAABB);
+    //    _insideBounds = transformUpdated ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
 
     if(_insideBounds)
 #endif
