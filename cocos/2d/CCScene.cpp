@@ -115,10 +115,11 @@ std::string Scene::getDescription() const
 
 void Scene::onProjectionChanged(EventCustom* event)
 {
-    if (_defaultCamera)
-    {
-        _defaultCamera->initDefault();
-    }
+    // Sheado - removed this because camera is repositioned when initDefault() is unecessarily (in our case) called
+//    if (_defaultCamera)
+//    {
+//        _defaultCamera->initDefault();
+//    }
 }
 
 static bool camera_cmp(const Camera* a, const Camera* b)

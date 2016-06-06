@@ -131,6 +131,10 @@ public:
      */
     virtual const Size& getFrameSize() const;
 
+    // Sheado - fullscreen toggle
+    virtual void setFullscreen(){}
+    virtual void setWindowed( int windowWidth, int windowHeight ){}
+    
     /**
      * Set the frame size of EGL view.
      */

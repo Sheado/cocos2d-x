@@ -563,6 +563,44 @@ void GLViewImpl::updateFrameSize()
     }
 }
 
+void GLViewImpl::setFullscreen()
+{
+    _monitor = glfwGetPrimaryMonitor();
+    if( _monitor )
+    {
+        const GLFWvidmode* mode = glfwGetVideoMode( _monitor );
+        int w = mode->width;
+        int h = mode->height;
+        glfwSetWindowMonitor(_mainWindow, _monitor, 0, 0, w, h, mode->refreshRate);
+        // TODO - sheado - are these coincidentally working because current monitor I'm testing on is 1080p?
+        _screenSize = Size(w, h);
+        updateDesignResolutionSize();
+        Director::getInstance()->setViewport();
+    }
+}
+
+void GLViewImpl::setWindowed( int w, int h )
+{
+    int x = 0, y = 0;
+    if( _mainWindow )
+    {
+        glfwGetWindowSize(_mainWindow, &x, &y);
+    }
+    
+    x = (x-w)/2;
+    if( x < 0 )
+        x = 0;
+    y = (y-h)/2;
+    if( y < 0 )
+        y = 0;
+    
+    glfwSetWindowMonitor(_mainWindow, NULL, x, y, w, h, GLFW_DONT_CARE);
+    _screenSize = Size(w, h);
+    updateFrameSize();
+    updateDesignResolutionSize();
+    Director::getInstance()->setViewport();
+}
+
 void GLViewImpl::setFrameSize(float width, float height)
 {
     GLView::setFrameSize(width, height);

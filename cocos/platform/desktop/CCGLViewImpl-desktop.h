@@ -86,6 +86,8 @@ public:
     virtual void end() override;
     virtual void swapBuffers() override;
     virtual void setFrameSize(float width, float height) override;
+    virtual void setFullscreen() override;
+    virtual void setWindowed( int windowWidth, int windowHeight ) override;
     virtual void setIMEKeyboardState(bool bOpen) override;
 
     /*
