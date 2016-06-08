@@ -363,14 +363,14 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
         }
     }
 
-    
-    glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
     glfwWindowHint(GLFW_RED_BITS,_glContextAttrs.redBits);
     glfwWindowHint(GLFW_GREEN_BITS,_glContextAttrs.greenBits);
     glfwWindowHint(GLFW_BLUE_BITS,_glContextAttrs.blueBits);
     glfwWindowHint(GLFW_ALPHA_BITS,_glContextAttrs.alphaBits);
     glfwWindowHint(GLFW_DEPTH_BITS,_glContextAttrs.depthBits);
     glfwWindowHint(GLFW_STENCIL_BITS,_glContextAttrs.stencilBits);
+    // prevent auto iconify - especially in fullscreen mode on multi-monitor setup
+    glfwWindowHint(GLFW_AUTO_ICONIFY, GL_FALSE);
 
     _mainWindow = glfwCreateWindow(rect.size.width * _frameZoomFactor,
                                    rect.size.height * _frameZoomFactor,
@@ -656,27 +656,26 @@ void GLViewImpl::setFullscreen()
 void GLViewImpl::setWindowed( int w, int h )
 {
     int x = 0, y = 0;
+    GLFWmonitor* monitor = NULL;
     if( _mainWindow )
     {
         glfwGetWindowSize(_mainWindow, &x, &y);
+        monitor = glfwGetWindowMonitor(_mainWindow);
     }
-    if( _monitor )
+    
+    if( monitor )
     {
         int xMonitorStart = 0, yMonitorStart = 0;
         // This function returns the position, in screen coordinates, of the upper-left corner of the specified monitor.
-        glfwGetMonitorPos(_monitor, &xMonitorStart, &yMonitorStart);
-        const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
+        glfwGetMonitorPos(monitor, &xMonitorStart, &yMonitorStart);
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
         x = xMonitorStart + (mode->width-w)/2;
         y = yMonitorStart + (mode->height-h)/2;
     }
     else
     {
-        x = (x-w)/2;
-        if( x < 0 )
-            x = 0;
-        y = (y-h)/2;
-        if( y < 0 )
-            y = 0;
+        if( _mainWindow )
+            glfwGetWindowPos(_mainWindow, &x, &y);
     }
     
     glfwSetWindowMonitor(_mainWindow, NULL, x, y, w, h, GLFW_DONT_CARE);
@@ -888,8 +887,19 @@ void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int 
 {
     if (_resolutionPolicy != ResolutionPolicy::UNKNOWN)
     {
-        updateDesignResolutionSize();
-        Director::getInstance()->setViewport();
+        GLFWmonitor* monitor = glfwGetWindowMonitor(window);
+        if( monitor )
+        {
+            updateDesignResolutionSize();
+            Director::getInstance()->setViewport();
+        }
+        else
+        {
+            if( width < 640 )
+                width = 640;
+            height = roundf((float)width * (720.0f/1280.0f));
+            setWindowed(width, height);
+        }
     }
 }
 
