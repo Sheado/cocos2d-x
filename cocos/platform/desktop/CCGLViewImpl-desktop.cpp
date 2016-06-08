@@ -324,10 +324,10 @@ GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, Rect rect, f
     return nullptr;
 }
 
-GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName)
+GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName, Vec2 position)
 {
     auto ret = new (std::nothrow) GLViewImpl();
-    if(ret && ret->initWithFullScreen(viewName)) {
+    if(ret && ret->initWithFullScreen(viewName,position)) {
         ret->autorelease();
         return ret;
     }
@@ -352,6 +352,18 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 
     _frameZoomFactor = frameZoomFactor;
 
+    // for positioning if not fullscreen
+    bool isRepositioning = false;
+    if( _monitor == NULL )
+    {
+        if( rect.origin.x != -1 && rect.origin.y != -1 )
+        {
+            isRepositioning = true;
+            glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
+        }
+    }
+
+    
     glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
     glfwWindowHint(GLFW_RED_BITS,_glContextAttrs.redBits);
     glfwWindowHint(GLFW_GREEN_BITS,_glContextAttrs.greenBits);
@@ -366,7 +378,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
                                    _monitor,
                                    nullptr);
     glfwMakeContextCurrent(_mainWindow);
-
+    
     glfwSetMouseButtonCallback(_mainWindow, GLFWEventHandler::onGLFWMouseCallBack);
     glfwSetCursorPosCallback(_mainWindow, GLFWEventHandler::onGLFWMouseMoveCallBack);
     glfwSetScrollCallback(_mainWindow, GLFWEventHandler::onGLFWMouseScrollCallback);
@@ -377,6 +389,15 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
     glfwSetWindowIconifyCallback(_mainWindow, GLFWEventHandler::onGLFWWindowIconifyCallback);
     glfwSwapInterval(1); // sheado - added this for vsync
+    
+    // position if not fullscreen
+    if( isRepositioning )
+    {
+        glfwSetWindowPos(_mainWindow, rect.origin.x, rect.origin.y );
+        glfwWindowHint(GLFW_VISIBLE,GL_TRUE);
+        glfwShowWindow(_mainWindow);
+    }
+    
     setFrameSize(rect.size.width, rect.size.height);
 
     // check OpenGL version at first
@@ -400,10 +421,38 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     return true;
 }
 
-bool GLViewImpl::initWithFullScreen(const std::string& viewName)
+GLFWmonitor* GLViewImpl::getMonitor( Vec2 position )
+{
+    // inset the position by 100 pixels to make sure we don't skip the matchin monitor in the case where the position is off by a pixel or two
+    position.x += 100;
+    position.y += 100;
+    
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    int count = 0;
+    GLFWmonitor** monitors = glfwGetMonitors(&count);
+    // first monitor is always the primary monitor
+    for( int i = 0; i < count; ++i )
+    {
+        int xMonitorStart = 0, yMonitorStart = 0, xMonitorEnd = 0, yMonitorEnd = 0;
+        // This function returns the position, in screen coordinates, of the upper-left corner of the specified monitor.
+        glfwGetMonitorPos(monitors[i], &xMonitorStart, &yMonitorStart);
+        const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+        xMonitorEnd = xMonitorStart + mode->width;
+        yMonitorEnd = yMonitorStart + mode->height;
+        
+        if( position.x >= xMonitorStart && position.y >= yMonitorStart && position.x <= xMonitorEnd && position.y <= yMonitorEnd )
+        {
+            monitor = monitors[i];
+            break;
+        }
+    }
+    return monitor;
+}
+
+bool GLViewImpl::initWithFullScreen(const std::string& viewName, Vec2 position)
 {
     //Create fullscreen window on primary monitor at its current video mode.
-    _monitor = glfwGetPrimaryMonitor();
+    _monitor = getMonitor(position);
     if (nullptr == _monitor)
         return false;
 
@@ -566,6 +615,31 @@ void GLViewImpl::updateFrameSize()
 void GLViewImpl::setFullscreen()
 {
     _monitor = glfwGetPrimaryMonitor();
+    int x = 0, y = 0, w = 0, h = 0;
+    glfwGetWindowPos(_mainWindow, &x, &y);
+    glfwGetWindowSize(_mainWindow, &w, &h);
+    int xCenter = x + w / 2;
+    int yCenter = y + h / 2;
+    int count = 0;
+    GLFWmonitor** monitors = glfwGetMonitors(&count);
+    for( int i = 0; i < count; ++i )
+    {
+        const char* name = glfwGetMonitorName(monitors[i]);
+        int xMonitorStart = 0, yMonitorStart = 0, xMonitorEnd = 0, yMonitorEnd = 0;
+        // This function returns the position, in screen coordinates, of the upper-left corner of the specified monitor.
+        glfwGetMonitorPos(monitors[i], &xMonitorStart, &yMonitorStart);
+        const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+        xMonitorEnd = xMonitorStart + mode->width;
+        yMonitorEnd = yMonitorStart + mode->height;
+        
+        if( xCenter >= xMonitorStart && yCenter >= yMonitorStart && xCenter <= xMonitorEnd && yCenter <= yMonitorEnd )
+        {
+            _monitor = monitors[i];
+            break;
+        }
+    }
+    
+    
     if( _monitor )
     {
         const GLFWvidmode* mode = glfwGetVideoMode( _monitor );
@@ -586,19 +660,43 @@ void GLViewImpl::setWindowed( int w, int h )
     {
         glfwGetWindowSize(_mainWindow, &x, &y);
     }
-    
-    x = (x-w)/2;
-    if( x < 0 )
-        x = 0;
-    y = (y-h)/2;
-    if( y < 0 )
-        y = 0;
+    if( _monitor )
+    {
+        int xMonitorStart = 0, yMonitorStart = 0;
+        // This function returns the position, in screen coordinates, of the upper-left corner of the specified monitor.
+        glfwGetMonitorPos(_monitor, &xMonitorStart, &yMonitorStart);
+        const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
+        x = xMonitorStart + (mode->width-w)/2;
+        y = yMonitorStart + (mode->height-h)/2;
+    }
+    else
+    {
+        x = (x-w)/2;
+        if( x < 0 )
+            x = 0;
+        y = (y-h)/2;
+        if( y < 0 )
+            y = 0;
+    }
     
     glfwSetWindowMonitor(_mainWindow, NULL, x, y, w, h, GLFW_DONT_CARE);
     _screenSize = Size(w, h);
     updateFrameSize();
     updateDesignResolutionSize();
     Director::getInstance()->setViewport();
+}
+
+Vec2 GLViewImpl::getWindowPosition()
+{
+    Vec2 position(0, 0);
+    if( _mainWindow )
+    {
+        int x = 0, y = 0;
+        glfwGetWindowPos(_mainWindow, &x, &y);
+        position.x = x;
+        position.y = y;
+    }
+    return position;
 }
 
 void GLViewImpl::setFrameSize(float width, float height)

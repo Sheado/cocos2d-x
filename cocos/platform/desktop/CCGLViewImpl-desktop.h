@@ -61,7 +61,10 @@ class CC_DLL GLViewImpl : public GLView
 public:
     static GLViewImpl* create(const std::string& viewName);
     static GLViewImpl* createWithRect(const std::string& viewName, Rect size, float frameZoomFactor = 1.0f);
-    static GLViewImpl* createWithFullScreen(const std::string& viewName);
+    /**
+     * position is used to determine which monitor to use in multi-monitor setup
+     */
+    static GLViewImpl* createWithFullScreen(const std::string& viewName, Vec2 position);
     static GLViewImpl* createWithFullScreen(const std::string& viewName, const GLFWvidmode &videoMode, GLFWmonitor *monitor);
 
     /*
@@ -88,6 +91,7 @@ public:
     virtual void setFrameSize(float width, float height) override;
     virtual void setFullscreen() override;
     virtual void setWindowed( int windowWidth, int windowHeight ) override;
+    virtual Vec2 getWindowPosition() override;
     virtual void setIMEKeyboardState(bool bOpen) override;
 
     /*
@@ -121,7 +125,7 @@ protected:
     virtual ~GLViewImpl();
 
     bool initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor);
-    bool initWithFullScreen(const std::string& viewName);
+    bool initWithFullScreen(const std::string& viewName, Vec2 position);
     bool initWithFullscreen(const std::string& viewname, const GLFWvidmode &videoMode, GLFWmonitor *monitor);
 
     bool initGlew();
@@ -159,6 +163,11 @@ protected:
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(GLViewImpl);
 	ControllerImpl controllerManager;
+    
+    /**
+     * get monitor at given position
+     */
+    GLFWmonitor* getMonitor( Vec2 position );
 };
 
 NS_CC_END   // end of namespace   cocos2d
