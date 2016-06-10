@@ -192,7 +192,8 @@ public:
 	//static void pollJoystick(int id);
 
 private:
-	SDL_GameController* controllers[2];
+    static const int MAX_CONTROLLERS = 2;
+	SDL_GameController* controllers[MAX_CONTROLLERS];
 
 	void pollJoystick( int id, SDL_GameController* sdlController );
 

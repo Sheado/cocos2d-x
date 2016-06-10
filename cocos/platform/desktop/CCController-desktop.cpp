@@ -60,8 +60,8 @@ void ControllerImpl::init()
 		{
 			SDL_GameController *controller = SDL_GameControllerOpen(i);
 			controllers[controllerIndex] = controller;
-			log("Opened Joystick %d on %d\n", i, controllerIndex);
-			log("Name: %s\n", SDL_GameControllerName(controller));
+//			log("Opened Joystick %d on %d\n", i, controllerIndex);
+//			log("Name: %s\n", SDL_GameControllerName(controller));
 			if (++controllerIndex >= 2)
 				break;
 		}
@@ -79,6 +79,70 @@ void ControllerImpl::pollJoysticks()
 	while (SDL_PollEvent(&event))
 	{
 		// TODO - handle connect/disconnect
+        switch( event.type )
+        {
+            case SDL_CONTROLLERDEVICEADDED:
+            {
+                // NOTE: event.cdevice.which is the device index in this case
+                // could not find a reliable to id controller without opening it - so here goes with open/close
+                SDL_GameController* controller = SDL_GameControllerOpen( event.cdevice.which );
+                if( controller )
+                {
+                    bool isAssigned = false;
+                    // check if already assigned
+                    for( int i = 0; i < MAX_CONTROLLERS; ++i )
+                    {
+                        if( controllers[i] == controller )
+                        {
+                            isAssigned = true;
+                            break;
+                        }
+                    }
+                    if( !isAssigned )
+                    {
+                        // if not assigned and we have room to assign it
+                        for( int i = 0; i < MAX_CONTROLLERS; ++i )
+                        {
+                            if( controllers[i] == NULL )
+                            {
+                                controllers[i] = controller;
+                                isAssigned = true;
+                                break;
+                            }
+                        }
+                        // if no room to assign it, close it
+                        if( !isAssigned )
+                            SDL_GameControllerClose( controller );
+                    }
+                }
+                break;
+            }
+            case SDL_CONTROLLERDEVICEREMOVED:
+                // NOTE: event.cdevice.which is the instance id in this case
+                for( int i = 0; i < MAX_CONTROLLERS; ++i )
+                {
+                    if( controllers[i]  )
+                    {
+                        SDL_bool isAttached = SDL_GameControllerGetAttached(controllers[i]);
+                        if( !isAttached )
+                        {
+                            ControllerDesktop* controller = (ControllerDesktop*)Controller::getControllerByTag(i);
+                            // zero out all of the axes - sometimes before disconnect the control spits out a bunch of junk axis data
+                            if( controller )
+                            {
+                                controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_X, 0, true);
+                                controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_Y, 0, true);
+                                controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_X, 0, true);
+                                controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_Y, 0, true);
+                            }
+                            controllers[i] = NULL;
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+        }
 	}
 
 	if (controllers[0])
