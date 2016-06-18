@@ -594,7 +594,10 @@ void Sprite::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     AABB cPositionAABB = AABB(Vec3::ZERO, Vec3(_contentSize.width, _contentSize.height, _positionZ));
     cPositionAABB.transform(getNodeToWorldTransform());
     // camera clipping
-    _insideBounds = Camera::getVisitingCamera()->isVisibleInFrustum(&cPositionAABB);
+    auto camera = Camera::getVisitingCamera();
+    _insideBounds = false;
+    if( camera )
+        _insideBounds = camera->isVisibleInFrustum(&cPositionAABB);
     // Don't do calculate the culling if the transform was not updated
     //    _insideBounds = (flags & FLAGS_TRANSFORM_DIRTY) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
     if(_insideBounds)
