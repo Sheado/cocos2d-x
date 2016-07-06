@@ -334,13 +334,37 @@ FileUtils* FileUtils::getInstance()
     return s_sharedFileUtils;
 }
 
-
+/**
+ * Sheado - modified to save to ApplicationSupport instead of Document folder
+ * https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/ManagingFIlesandDirectories/ManagingFIlesandDirectories.html
+ */
 std::string FileUtilsApple::getWritablePath() const
 {
-    // save to document folder
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    std::string strRet = [documentsDirectory UTF8String];
+    NSString* bundleID = [[NSBundle mainBundle] bundleIdentifier];
+    NSFileManager*fm = [NSFileManager defaultManager];
+    NSURL*    dirPath = nil;
+    
+    // Find the application support directory in the home directory.
+    NSArray* appSupportDir = [fm URLsForDirectory:NSApplicationSupportDirectory
+                                        inDomains:NSUserDomainMask];
+    if ([appSupportDir count] > 0)
+    {
+        // Append the bundle ID to the URL for the
+        // Application Support directory
+        dirPath = [[appSupportDir objectAtIndex:0] URLByAppendingPathComponent:bundleID];
+        
+        // If the directory does not exist, this method creates it.
+        // This method is only available in OS X v10.7 and iOS 5.0 or later.
+        NSError*    theError = nil;
+        if (![fm createDirectoryAtURL:dirPath withIntermediateDirectories:YES
+                           attributes:nil error:&theError])
+        {
+            // TODO - Handle the error.
+            return "";
+        }
+    }
+    
+    std::string strRet = [dirPath fileSystemRepresentation];
     strRet.append("/");
     return strRet;
 }
