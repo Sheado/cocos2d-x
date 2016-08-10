@@ -287,8 +287,8 @@ GLViewImpl::GLViewImpl()
     glfwSetErrorCallback(GLFWEventHandler::onGLFWError);
     glfwInit();
 
-	// init SDL controller support
-	if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0)
+	// init SDL controller & audio support
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0)
 	{
 		log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 	}
