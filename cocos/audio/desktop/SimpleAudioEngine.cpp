@@ -34,25 +34,13 @@ using namespace std;
 static bool isSimpleAudioInitialized = false;
 static Mix_Music* currentMusic = NULL;  // only one song allowed at a time, therefore we can safely keep this reference here
 
-// TODO - cleanup -
-//#include <time.h>
-//using namespace std::chrono;
-//static long getTimeInMilliseconds() {
-//    auto now = system_clock::now();                         //grab time_point now
-//    auto now_ms = time_point_cast<milliseconds>(now);       //convert it to milliseconds
-//    auto value = now_ms.time_since_epoch();
-//    long duration = value.count();
-//    return duration;
-//}
-
-
 static void static_init()
 {
     if( !isSimpleAudioInitialized )
     {
         Mix_Init(MIX_INIT_OGG);
-        Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,1024);
-        isSimpleAudioInitialized = true;
+		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
+		isSimpleAudioInitialized = true;
     }
 }
 
@@ -264,8 +252,7 @@ void SimpleAudioEngine::setEffectsVolume(float volume)
     static_setEffectsVolume(volume);
 }
 
-unsigned int SimpleAudioEngine::playEffect(const char *pszFilePath, bool bLoop,
-                                           float pitch, float pan, float gain)
+unsigned int SimpleAudioEngine::playEffect(const char *pszFilePath, bool bLoop, float pitch, float pan, float gain)
 {
 	const int INVALID_CHANNEL = 9999;
 	int channel = INVALID_CHANNEL;
@@ -280,17 +267,14 @@ unsigned int SimpleAudioEngine::playEffect(const char *pszFilePath, bool bLoop,
             int loop = 0;
             if( bLoop )
                 loop = -1;
+
 			channel = Mix_PlayChannel(-1, chunk, loop);
 			if (channel < 0)
 				channel = INVALID_CHANNEL;
         }
     }
-	return channel;
-}
 
-void SimpleAudioEngine::stopEffect(unsigned int nSoundId)
-{
-	Mix_HaltChannel(nSoundId);
+	return channel;
 }
 
 void SimpleAudioEngine::preloadEffect(const char* pszFilePath)
@@ -301,7 +285,7 @@ void SimpleAudioEngine::preloadEffect(const char* pszFilePath)
 		// Changing file path to full path
 		std::string fullPath = FileUtils::getInstance()->fullPathForFilename(pszFilePath);
 		Mix_Chunk* chunk = Mix_LoadWAV(fullPath.data());
-		if ( chunk )
+		if (chunk)
 			audioChunkMap.insert({ pszFilePath, chunk });
 	}
 }
@@ -331,6 +315,11 @@ void SimpleAudioEngine::pauseAllEffects()
 void SimpleAudioEngine::resumeAllEffects()
 {
     static_resumeAllEffects();
+}
+
+void SimpleAudioEngine::stopEffect(unsigned int nSoundId)
+{
+	Mix_HaltChannel(nSoundId);
 }
 
 void SimpleAudioEngine::stopAllEffects()
