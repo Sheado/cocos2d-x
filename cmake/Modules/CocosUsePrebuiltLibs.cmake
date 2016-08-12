@@ -79,6 +79,7 @@ set(all_prebuilt_libs
   webp
   websockets
   sdl
+  glfw3
 )
 
 
