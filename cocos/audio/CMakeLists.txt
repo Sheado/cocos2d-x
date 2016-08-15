@@ -15,10 +15,11 @@ if(WINDOWS)
 
 elseif(LINUX)
     set(COCOS_AUDIO_PLATFORM_SRC
-        audio/linux/SimpleAudioEngineFMOD.cpp
-        audio/linux/FmodAudioPlayer.cpp
-        audio/linux/FmodAudioPlayer.h
-        audio/linux/AudioPlayer.h
+        audio/desktop/SimpleAudioEngine.cpp
+        #audio/linux/SimpleAudioEngineFMOD.cpp
+        #audio/linux/FmodAudioPlayer.cpp
+        #audio/linux/FmodAudioPlayer.h
+        #audio/linux/AudioPlayer.h
     )
 
 elseif(MACOSX)

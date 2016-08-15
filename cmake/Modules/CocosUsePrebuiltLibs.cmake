@@ -9,7 +9,7 @@ set(_chipmunk_libs chipmunk libchipmunk)
 set(_sdl_prefix SDL)
 set(_sdl_inc SDL.h)
 set(_sdl_inc_paths sdl)
-set(_sdl_libs SDL2 libSDL2 SDL2 SDL2main)
+set(_sdl_libs SDL2 libSDL2 SDL2 SDL2main SDL2_mixer)
 
 set(_curl_inc curl/curl.h)
 set(_curl_libs crypto ssl libeay32 ssleay32 curl libcurl_imp libcurl)
@@ -65,9 +65,9 @@ set(_OpenalSoft_libs OpenAL32)
 set(_zlib_inc zlib.h)
 set(_zlib_libs libzlib)
 
-set(_fmod_prefix FMODEX)
-set(_fmod_inc fmod.h)
-set(_fmod_libs fmodex fmodex64 fmodexL fmodexL64)
+# set(_fmod_prefix FMODEX)
+# set(_fmod_inc fmod.h)
+# set(_fmod_libs fmodex fmodex64 fmodexL fmodexL64)
 
 set(all_prebuilt_libs
   chipmunk
@@ -93,7 +93,7 @@ if(MSVC)
 endif()
 
 if(LINUX)
-  list(APPEND all_prebuilt_libs fmod)
+#  list(APPEND all_prebuilt_libs fmod)
 endif()
 
 # END CONFIG
