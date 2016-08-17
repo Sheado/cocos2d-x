@@ -53,6 +53,11 @@ static void static_preloadBackgroundMusic(const char* pszFilePath)
     if( pszFilePath == NULL || strlen( pszFilePath ) <= 0 )
         return;
 
+    if( currentMusic )
+    {
+        Mix_FreeMusic( currentMusic );
+        currentMusic = NULL;
+    }
     currentMusic = Mix_LoadMUS( pszFilePath );
 	//if (!currentMusic)
 	//	log("Mix_LoadMUS(\"%s\"): %s\n", pszFilePath, Mix_GetError());
@@ -69,7 +74,7 @@ static void static_playBackgroundMusic(const char* pszFilePath, bool bLoop)
 
 static void static_stopBackgroundMusic()
 {
-    log( "### TODO: SimpleAudioEngine: static_stopBackgroundMusic()" );
+    Mix_HaltMusic();
 }
 
 static void static_pauseBackgroundMusic()
@@ -95,8 +100,7 @@ static bool static_willPlayBackgroundMusic()
 
 static bool static_isBackgroundMusicPlaying()
 {
-    log( "### TODO: SimpleAudioEngine: static_isBackgroundMusicPlaying()" );
-    return false;
+    return Mix_PlayingMusic();
 }
 
 static float static_getBackgroundMusicVolume()
