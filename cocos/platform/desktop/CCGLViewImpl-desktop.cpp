@@ -288,7 +288,7 @@ GLViewImpl::GLViewImpl()
     glfwInit();
 
 	// init SDL controller & audio support
-	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0)
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER | SDL_INIT_VIDEO) < 0)
 	{
 		log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 	}
@@ -300,6 +300,7 @@ GLViewImpl::~GLViewImpl()
     CCLOGINFO("deallocing GLViewImpl: %p", this);
     GLFWEventHandler::setGLViewImpl(nullptr);
     glfwTerminate();
+    SDL_Quit();
 }
 
 GLViewImpl* GLViewImpl::create(const std::string& viewName)
@@ -361,6 +362,11 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
             isRepositioning = true;
             glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
         }
+        SDL_EnableScreenSaver();
+    }
+    else // fullscreen
+    {
+        SDL_DisableScreenSaver();
     }
 
     glfwWindowHint(GLFW_RED_BITS,_glContextAttrs.redBits);
@@ -650,6 +656,8 @@ void GLViewImpl::setFullscreen()
         _screenSize = Size(w, h);
         updateDesignResolutionSize();
         Director::getInstance()->setViewport();
+        
+        SDL_DisableScreenSaver();
     }
 }
 
@@ -683,6 +691,7 @@ void GLViewImpl::setWindowed( int w, int h )
     updateFrameSize();
     updateDesignResolutionSize();
     Director::getInstance()->setViewport();
+    SDL_EnableScreenSaver();
 }
 
 Vec2 GLViewImpl::getWindowPosition()

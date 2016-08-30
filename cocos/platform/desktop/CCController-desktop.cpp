@@ -41,8 +41,6 @@ ControllerImpl::~ControllerImpl()
 			controllers[i] = NULL;
 		}
 	}
-	// for convenience, putting this here. Move to CCGLViewImpl-desktop if more features are required and make sure destruct order is correct
-	SDL_Quit();
 }
 
 /**
