@@ -43,7 +43,6 @@ NS_CC_BEGIN
 
 static void DisableScreensaver()
 {
-	SDL_DisableScreenSaver();
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
 #endif
@@ -51,7 +50,6 @@ static void DisableScreensaver()
 
 static void EnableScreensaver()
 {
-	SDL_EnableScreenSaver();
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	SetThreadExecutionState(ES_CONTINUOUS);
 #endif
@@ -304,7 +302,7 @@ GLViewImpl::GLViewImpl()
     glfwInit();
 
 	// init SDL controller & audio support
-	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER | SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER ) < 0)
 	{
 		log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 	}
