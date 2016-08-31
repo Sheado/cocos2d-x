@@ -41,6 +41,22 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
+static void DisableScreensaver()
+{
+	SDL_DisableScreenSaver();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+#endif
+}
+
+static void EnableScreensaver()
+{
+	SDL_EnableScreenSaver();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	SetThreadExecutionState(ES_CONTINUOUS);
+#endif
+}
+
 // GLFWEventHandler
 
 class GLFWEventHandler
@@ -392,11 +408,11 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
             isRepositioning = true;
             glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
         }
-        SDL_EnableScreenSaver();
+        EnableScreensaver();
     }
     else // fullscreen
     {
-        SDL_DisableScreenSaver();
+        DisableScreensaver();
     }
 
     glfwWindowHint(GLFW_RED_BITS,_glContextAttrs.redBits);
@@ -692,7 +708,7 @@ void GLViewImpl::setFullscreen()
         updateDesignResolutionSize();
         Director::getInstance()->setViewport();
         
-        SDL_DisableScreenSaver();
+		DisableScreensaver();
     }
 }
 
@@ -726,7 +742,7 @@ void GLViewImpl::setWindowed( int w, int h )
     updateFrameSize();
     updateDesignResolutionSize();
     Director::getInstance()->setViewport();
-    SDL_EnableScreenSaver();
+    EnableScreensaver();
 }
 
 Vec2 GLViewImpl::getWindowPosition()
