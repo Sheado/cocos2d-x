@@ -347,6 +347,36 @@ GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName, const 
     return nullptr;
 }
 
+
+void getVirtualDimensions( float &l, float &t, float &r, float &b )
+{
+	int count = 0;
+	GLFWmonitor** monitors = glfwGetMonitors(&count);
+	if (monitors)
+	{
+		for (int i = 0; i < count; ++i)
+		{
+			if (monitors[i])
+			{
+				int x = 0, y = 0;
+				glfwGetMonitorPos(monitors[i], &x, &y);
+				if (x < l)
+					l = x;
+				if (y < t)
+					t = y;
+				auto mode = glfwGetVideoMode(monitors[i]);
+				if (mode)
+				{
+					if (x + mode->width > r)
+						r = x + mode->width;
+					if (y + mode->height > b)
+						b = y + mode->height;
+				}
+			}
+		}
+	}
+}
+
 bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor)
 {
     setViewName(viewName);
@@ -399,11 +429,16 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     // position if not fullscreen
     if( isRepositioning )
     {
-        glfwSetWindowPos(_mainWindow, rect.origin.x, rect.origin.y );
+		// make sure the coordinates are valid before repositioning
+		float l = 0, t = 0, r = 0, b = 0;
+		getVirtualDimensions(l, t, r, b);
+		if (rect.getMinX() >= l && rect.getMinY() >= t && rect.getMaxX() <= r && rect.getMaxY() <= b )
+			glfwSetWindowPos(_mainWindow, rect.origin.x, rect.origin.y );
+
         glfwWindowHint(GLFW_VISIBLE,GL_TRUE);
         glfwShowWindow(_mainWindow);
     }
-    
+
     setFrameSize(rect.size.width, rect.size.height);
 
     // check OpenGL version at first
