@@ -314,6 +314,7 @@ GLViewImpl::~GLViewImpl()
     CCLOGINFO("deallocing GLViewImpl: %p", this);
     GLFWEventHandler::setGLViewImpl(nullptr);
     glfwTerminate();
+    controllerManager.close();
     SDL_Quit();
 }
 

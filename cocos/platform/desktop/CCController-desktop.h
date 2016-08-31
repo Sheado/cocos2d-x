@@ -189,6 +189,7 @@ public:
 	~ControllerImpl();
 	void pollJoysticks();
 	void init();
+    void close();
 	//static void pollJoystick(int id);
 
 private:

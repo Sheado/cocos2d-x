@@ -32,6 +32,9 @@ ControllerImpl::ControllerImpl()
 }
 
 ControllerImpl::~ControllerImpl()
+{}
+
+void ControllerImpl::close()
 {
 	for (int i = 0; i < 2; ++i)
 	{
