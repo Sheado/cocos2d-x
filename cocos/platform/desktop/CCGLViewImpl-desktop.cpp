@@ -436,7 +436,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
     glfwSetWindowIconifyCallback(_mainWindow, GLFWEventHandler::onGLFWWindowIconifyCallback);
-    glfwSwapInterval(1); // sheado - added this for vsync
+    glfwSwapInterval(1);    // vsync
+    glfwSetWindowAspectRatio(_mainWindow, 16, 9);
+    glfwSetWindowSizeLimits(_mainWindow, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE);
     
     // position if not fullscreen
     if( isRepositioning )
@@ -589,7 +591,6 @@ void GLViewImpl::enableRetina(bool enabled)
     {
         _retinaFactor = 2;
     }
-    updateFrameSize();
 #endif
 }
 
@@ -620,7 +621,6 @@ void GLViewImpl::setFrameZoomFactor(float zoomFactor)
     }
 
     _frameZoomFactor = zoomFactor;
-    updateFrameSize();
 }
 
 float GLViewImpl::getFrameZoomFactor() const
@@ -628,42 +628,7 @@ float GLViewImpl::getFrameZoomFactor() const
     return _frameZoomFactor;
 }
 
-void GLViewImpl::updateFrameSize()
-{
-    if (_screenSize.width > 0 && _screenSize.height > 0)
-    {
-        int w = 0, h = 0;
-        glfwGetWindowSize(_mainWindow, &w, &h);
 
-        int frameBufferW = 0, frameBufferH = 0;
-        glfwGetFramebufferSize(_mainWindow, &frameBufferW, &frameBufferH);
-
-        if (frameBufferW == 2 * w && frameBufferH == 2 * h)
-        {
-            if (_isRetinaEnabled)
-            {
-                _retinaFactor = 1;
-            }
-            else
-            {
-                _retinaFactor = 2;
-            }
-            glfwSetWindowSize(_mainWindow, _screenSize.width/2 * _retinaFactor * _frameZoomFactor, _screenSize.height/2 * _retinaFactor * _frameZoomFactor);
-
-            _isInRetinaMonitor = true;
-        }
-        else
-        {
-            if (_isInRetinaMonitor)
-            {
-                _retinaFactor = 1;
-            }
-            glfwSetWindowSize(_mainWindow, _screenSize.width * _retinaFactor * _frameZoomFactor, _screenSize.height *_retinaFactor * _frameZoomFactor);
-
-            _isInRetinaMonitor = false;
-        }
-    }
-}
 
 void GLViewImpl::setFullscreen()
 {
@@ -735,10 +700,13 @@ void GLViewImpl::setWindowed( int w, int h )
     
     glfwSetWindowMonitor(_mainWindow, NULL, x, y, w, h, GLFW_DONT_CARE);
     _screenSize = Size(w, h);
-    updateFrameSize();
     updateDesignResolutionSize();
     Director::getInstance()->setViewport();
     EnableScreensaver();
+    
+    // if coming out of fullscreen mode restore window - helpful on Linux
+    if( monitor )
+        	glfwRestoreWindow(_mainWindow);
 }
 
 Vec2 GLViewImpl::getWindowPosition()
@@ -757,7 +725,6 @@ Vec2 GLViewImpl::getWindowPosition()
 void GLViewImpl::setFrameSize(float width, float height)
 {
     GLView::setFrameSize(width, height);
-    updateFrameSize();
 }
 
 void GLViewImpl::setViewPortInPoints(float x , float y , float w , float h)
@@ -912,31 +879,6 @@ void GLViewImpl::onGLFWWindowPosCallback(GLFWwindow *windows, int x, int y)
 
 void GLViewImpl::onGLFWframebuffersize(GLFWwindow* window, int w, int h)
 {
-    float frameSizeW = _screenSize.width;
-    float frameSizeH = _screenSize.height;
-    float factorX = frameSizeW / w * _retinaFactor * _frameZoomFactor;
-    float factorY = frameSizeH / h * _retinaFactor * _frameZoomFactor;
-
-    if (fabs(factorX - 0.5f) < FLT_EPSILON && fabs(factorY - 0.5f) < FLT_EPSILON )
-    {
-        _isInRetinaMonitor = true;
-        if (_isRetinaEnabled)
-        {
-            _retinaFactor = 1;
-        }
-        else
-        {
-            _retinaFactor = 2;
-        }
-
-        glfwSetWindowSize(window, static_cast<int>(frameSizeW * 0.5f * _retinaFactor * _frameZoomFactor) , static_cast<int>(frameSizeH * 0.5f * _retinaFactor * _frameZoomFactor));
-    }
-    else if(fabs(factorX - 2.0f) < FLT_EPSILON && fabs(factorY - 2.0f) < FLT_EPSILON)
-    {
-        _isInRetinaMonitor = false;
-        _retinaFactor = 1;
-        glfwSetWindowSize(window, static_cast<int>(frameSizeW * _retinaFactor * _frameZoomFactor), static_cast<int>(frameSizeH * _retinaFactor * _frameZoomFactor));
-    }
 }
 
 void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
@@ -951,10 +893,19 @@ void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int 
         }
         else
         {
-            if( width < 640 )
-                width = 640;
-            height = roundf((float)width * (720.0f/1280.0f));
-            setWindowed(width, height);
+            _screenSize = Size(width, height);
+            updateDesignResolutionSize();
+            Director::getInstance()->setViewport();
+
+			// for the stubborn OS that ignores the aspect ratio and min size 
+			float aspectRatio = (float)width / (float)height;
+			if (aspectRatio > 1.82 || aspectRatio < 1.73 || width < 640 || height < 360)
+			{
+				if (width < 640 || height < 360)
+					width = 640;
+				float h = (float)width * (720.0f / 1280.0f);
+				glfwSetWindowSize(window, width, (int)h);
+			}
         }
     }
 }
