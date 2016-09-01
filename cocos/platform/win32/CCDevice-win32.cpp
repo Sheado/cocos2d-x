@@ -493,8 +493,12 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
     return ret;
 }
 
-void Device::setKeepScreenOn(bool value)
+void Device::setKeepScreenOn(bool isKeepOn)
 {
+	if ( isKeepOn )
+		SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+	else
+		SetThreadExecutionState(ES_CONTINUOUS);
 }
 
 NS_CC_END
