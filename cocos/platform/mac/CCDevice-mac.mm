@@ -32,6 +32,10 @@ THE SOFTWARE.
 #include <string>
 #include "base/ccTypes.h"
 
+#import <IOKit/pwr_mgt/IOPMLib.h>
+
+static IOPMAssertionID assertionID = 0;
+
 NS_CC_BEGIN
 
 int Device::getDPI()
@@ -248,8 +252,27 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
     return ret;
 }
 
-void Device::setKeepScreenOn(bool value)
+void Device::setKeepScreenOn(bool isKeepOn)
 {
+    @autoreleasepool
+    {
+        // preventing multiple assertions (multiple keep on calls)
+        if( assertionID )
+        {
+            IOPMAssertionRelease(assertionID);
+            assertionID = 0;
+        }
+
+        
+        if( isKeepOn )
+        {
+            NSString *name = @"Game requested fullscreen";
+            IOPMAssertionCreateWithDescription(kIOPMAssertPreventUserIdleDisplaySleep,
+                                               (CFStringRef) name,
+                                               NULL, NULL, NULL, 0, NULL,
+                                               &assertionID);
+        }
+    }
 }
 
 NS_CC_END

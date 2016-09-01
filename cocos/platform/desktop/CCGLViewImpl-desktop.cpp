@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <unordered_map>
 
 #include "platform/CCApplication.h"
+#include "platform/CCDevice.h"
 #include "base/CCDirector.h"
 #include "base/CCTouch.h"
 #include "base/CCEventDispatcher.h"
@@ -43,6 +44,8 @@ NS_CC_BEGIN
 
 static void DisableScreensaver()
 {
+    Device::setKeepScreenOn(true);
+    // TODO - sheado - move to CCDevice-Win32
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
 #endif
@@ -50,6 +53,8 @@ static void DisableScreensaver()
 
 static void EnableScreensaver()
 {
+    Device::setKeepScreenOn(false);
+    // TODO - sheado - move to CCDevice-Win32
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	SetThreadExecutionState(ES_CONTINUOUS);
 #endif
