@@ -130,8 +130,6 @@ protected:
 
     bool initGlew();
 
-    void updateFrameSize();
-
     // GLFW callbacks
     void onGLFWError(int errorID, const char* errorDesc);
     void onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int modify);
