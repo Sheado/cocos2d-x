@@ -119,13 +119,16 @@ void ControllerImpl::pollJoysticks()
                 break;
             }
             case SDL_CONTROLLERDEVICEREMOVED:
+            {
+                auto whichController = SDL_GameControllerFromInstanceID(event.cdevice.which);
                 // NOTE: event.cdevice.which is the instance id in this case
                 for( int i = 0; i < MAX_CONTROLLERS; ++i )
                 {
                     if( controllers[i]  )
                     {
                         SDL_bool isAttached = SDL_GameControllerGetAttached(controllers[i]);
-                        if( !isAttached )
+                        // remove the relevant controller.. and while we're at it, any disconnected controller
+                        if( !isAttached || controllers[i] == whichController )
                         {
                             ControllerDesktop* controller = (ControllerDesktop*)Controller::getControllerByTag(i);
                             // zero out all of the axes - sometimes before disconnect the control spits out a bunch of junk axis data
@@ -135,12 +138,14 @@ void ControllerImpl::pollJoysticks()
                                 controller->onAxisEvent(Controller::Key::JOYSTICK_LEFT_Y, 0, true);
                                 controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_X, 0, true);
                                 controller->onAxisEvent(Controller::Key::JOYSTICK_RIGHT_Y, 0, true);
+                                // we don't send a destroy/disconnect event - instead we connect the next controller to the same ControllerDesktop
                             }
                             controllers[i] = NULL;
                         }
                     }
                 }
                 break;
+            }
             default:
                 break;
         }

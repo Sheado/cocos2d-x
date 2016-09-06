@@ -704,9 +704,9 @@ void GLViewImpl::setWindowed( int w, int h )
     Director::getInstance()->setViewport();
     EnableScreensaver();
     
-    // if coming out of fullscreen mode restore window - helpful on Linux
+    // in case coming out of fullscreen mode, restore window - helpful on Linux
     if( monitor )
-        	glfwRestoreWindow(_mainWindow);
+        glfwRestoreWindow(_mainWindow);
 }
 
 Vec2 GLViewImpl::getWindowPosition()
