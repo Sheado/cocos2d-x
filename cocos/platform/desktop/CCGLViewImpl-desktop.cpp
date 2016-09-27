@@ -38,6 +38,7 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "base/ccUTF8.h"
 #include "base/CCGameController.h"
+#include "audio/include/SimpleAudioEngine.h"
 #include <SDL.h>
 
 NS_CC_BEGIN
@@ -312,6 +313,8 @@ GLViewImpl::~GLViewImpl()
     GLFWEventHandler::setGLViewImpl(nullptr);
     glfwTerminate();
     controllerManager.close();
+	// Make sure SimpleAudioEngine is cleaned up if it was used. We need to do this here since audio cleanup must happen before SDL_Quit().
+	CocosDenshion::SimpleAudioEngine::end();
     SDL_Quit();
 }
 

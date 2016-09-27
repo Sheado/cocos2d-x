@@ -186,6 +186,9 @@ void SimpleAudioEngine::end()
 {
     if (s_pEngine)
     {
+		// if we have an instance, we need to close SDL_mixer. This will stop channels and music before cleanup.  
+		Mix_CloseAudio();
+
         delete s_pEngine;
         s_pEngine = NULL;
     }
