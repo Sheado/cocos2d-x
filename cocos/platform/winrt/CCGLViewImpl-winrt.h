@@ -38,6 +38,7 @@ THE SOFTWARE.
 #include <memory>
 #include <wrl/client.h>
 #include <Keyboard-winrt.h>
+#include "../desktop/CCController-desktop.h"	// TODO - sheado - xbox
 
 NS_CC_BEGIN
 

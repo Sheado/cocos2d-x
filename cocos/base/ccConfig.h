@@ -277,13 +277,13 @@ To enable set it to a value different than 0. Disabled by default.
 /** Support JPEG or not. If your application don't use jpeg format picture, you can undefine this macro to save package size.
  */
 #ifndef CC_USE_JPEG
-#define CC_USE_JPEG  1
+//#define CC_USE_JPEG  1
 #endif // CC_USE_JPEG
 
 /** Support TIFF or not. If your application don't use TIFF format picture, you can undefine this macro to save package size.
  */
 #ifndef CC_USE_TIFF
-#define CC_USE_TIFF  1
+//#define CC_USE_TIFF  1
 #endif // CC_USE_TIFF
 
 /** Support webp or not. If your application don't use webp format picture, you can undefine this macro to save package size.
@@ -346,5 +346,17 @@ To enable set it to a value different than 0. Disabled by default.
 #ifndef CC_ALLOCATOR_GLOBAL_NEW_DELETE
 # define CC_ALLOCATOR_GLOBAL_NEW_DELETE cocos2d::allocator::AllocatorStrategyGlobalSmallBlock
 #endif
+
+ /** Support WIC (Windows Image Component) or not. Replaces PNG, TIFF and JPEG
+ */
+#ifndef CC_USE_WIC
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+#define CC_USE_WIC  1
+#undef CC_USE_TIFF
+#undef CC_USE_JPEG
+#undef CC_USE_PNG
+#endif
+#endif // CC_USE_WIC
+
 
 #endif // __CCCONFIG_H__

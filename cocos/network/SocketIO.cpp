@@ -429,8 +429,8 @@ void SIOClientImpl::onMessage(WebSocket* ws, const WebSocket::Data& data)
             break;
         case 5:
             log("Event Received with data: %s \n", s_data.c_str());
-
-            if(c)
+			// TODO - sheado - compiling issues
+ /*           if(c)
             {
                 eventname = "";
                 pos = s_data.find(":");
@@ -443,7 +443,7 @@ void SIOClientImpl::onMessage(WebSocket* ws, const WebSocket::Data& data)
                 }
 
                 c->fireEvent(eventname, payload);
-            }
+            }*/
 
             break;
         case 6:

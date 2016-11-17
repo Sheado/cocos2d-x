@@ -27,7 +27,7 @@ namespace cocosbuilder {;
 
 void ControlButtonLoader::onHandlePropTypeCheck(Node * pNode, Node * pParent, const char * pPropertyName, bool pCheck, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_ZOOMONTOUCHDOWN) == 0) {
-        ((ControlButton *)pNode)->setZoomOnTouchDown(pCheck);
+        //((ControlButton *)pNode)->setZoomOnTouchDown(pCheck);
     } else {
         ControlLoader::onHandlePropTypeCheck(pNode, pParent, pPropertyName, pCheck, ccbReader);
     }

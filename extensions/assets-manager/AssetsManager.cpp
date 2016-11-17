@@ -23,8 +23,8 @@
  ****************************************************************************/
 #include "AssetsManager.h"
 
-#include <curl/curl.h>
-#include <curl/easy.h>
+//#include <curl/curl.h>
+//#include <curl/easy.h>
 #include <stdio.h>
 #include <vector>
 #include <thread>
@@ -145,55 +145,55 @@ static size_t getVersionCode(void *ptr, size_t size, size_t nmemb, void *userdat
 
 bool AssetsManager::checkUpdate()
 {
-    if (_versionFileUrl.size() == 0) return false;
-    
-    _curl = curl_easy_init();
-    if (! _curl)
-    {
-        CCLOG("can not init curl");
-        return false;
-    }
-    
-    // Clear _version before assign new value.
-    _version.clear();
-    
-    CURLcode res;
-    curl_easy_setopt(_curl, CURLOPT_URL, _versionFileUrl.c_str());
-    curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, getVersionCode);
-    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_version);
-    if (_connectionTimeout) curl_easy_setopt(_curl, CURLOPT_CONNECTTIMEOUT, _connectionTimeout);
-    curl_easy_setopt(_curl, CURLOPT_NOSIGNAL, 1L);
-    curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_LIMIT, LOW_SPEED_LIMIT);
-    curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_TIME, LOW_SPEED_TIME);
-    curl_easy_setopt(_curl, CURLOPT_FOLLOWLOCATION, 1 );
-    res = curl_easy_perform(_curl);
-    
-    if (res != 0)
-    {
-        Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
-            if (this->_delegate)
-                this->_delegate->onError(ErrorCode::NETWORK);
-        });
-        CCLOG("can not get version file content, error code is %d", res);
-        curl_easy_cleanup(_curl);
-        return false;
-    }
-    
-    string recordedVersion = UserDefault::getInstance()->getStringForKey(keyOfVersion().c_str());
-    if (recordedVersion == _version)
-    {
-        Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
-            if (this->_delegate)
-                this->_delegate->onError(ErrorCode::NO_NEW_VERSION);
-        });
-        CCLOG("there is not new version");
-        // Set resource search path.
-        setSearchPath();
-        return false;
-    }
-    
-    CCLOG("there is a new version: %s", _version.c_str());
+    //if (_versionFileUrl.size() == 0) return false;
+    //
+    //_curl = curl_easy_init();
+    //if (! _curl)
+    //{
+    //    CCLOG("can not init curl");
+    //    return false;
+    //}
+    //
+    //// Clear _version before assign new value.
+    //_version.clear();
+    //
+    //CURLcode res;
+    //curl_easy_setopt(_curl, CURLOPT_URL, _versionFileUrl.c_str());
+    //curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    //curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, getVersionCode);
+    //curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_version);
+    //if (_connectionTimeout) curl_easy_setopt(_curl, CURLOPT_CONNECTTIMEOUT, _connectionTimeout);
+    //curl_easy_setopt(_curl, CURLOPT_NOSIGNAL, 1L);
+    //curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_LIMIT, LOW_SPEED_LIMIT);
+    //curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_TIME, LOW_SPEED_TIME);
+    //curl_easy_setopt(_curl, CURLOPT_FOLLOWLOCATION, 1 );
+    //res = curl_easy_perform(_curl);
+    //
+    //if (res != 0)
+    //{
+    //    Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
+    //        if (this->_delegate)
+    //            this->_delegate->onError(ErrorCode::NETWORK);
+    //    });
+    //    CCLOG("can not get version file content, error code is %d", res);
+    //    curl_easy_cleanup(_curl);
+    //    return false;
+    //}
+    //
+    //string recordedVersion = UserDefault::getInstance()->getStringForKey(keyOfVersion().c_str());
+    //if (recordedVersion == _version)
+    //{
+    //    Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
+    //        if (this->_delegate)
+    //            this->_delegate->onError(ErrorCode::NO_NEW_VERSION);
+    //    });
+    //    CCLOG("there is not new version");
+    //    // Set resource search path.
+    //    setSearchPath();
+    //    return false;
+    //}
+    //
+    //CCLOG("there is a new version: %s", _version.c_str());
     
     return true;
 }
@@ -515,48 +515,48 @@ int assetsManagerProgressFunc(void *ptr, double totalToDownload, double nowDownl
 
 bool AssetsManager::downLoad()
 {
-    // Create a file to save package.
-    const string outFileName = _storagePath + TEMP_PACKAGE_FILE_NAME;
-    FILE *fp = fopen(outFileName.c_str(), "wb");
-    if (! fp)
-    {
-        Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
-            if (this->_delegate)
-                this->_delegate->onError(ErrorCode::CREATE_FILE);
-        });
-        CCLOG("can not create file %s", outFileName.c_str());
-        return false;
-    }
-    
-    // Download pacakge
-    CURLcode res;
-    curl_easy_setopt(_curl, CURLOPT_URL, _packageUrl.c_str());
-    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, downLoadPackage);
-    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, fp);
-    curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, false);
-    curl_easy_setopt(_curl, CURLOPT_PROGRESSFUNCTION, assetsManagerProgressFunc);
-    curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, this);
-    curl_easy_setopt(_curl, CURLOPT_NOSIGNAL, 1L);
-    curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_LIMIT, LOW_SPEED_LIMIT);
-    curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_TIME, LOW_SPEED_TIME);
-    curl_easy_setopt(_curl, CURLOPT_FOLLOWLOCATION, 1 );
+    //// Create a file to save package.
+    //const string outFileName = _storagePath + TEMP_PACKAGE_FILE_NAME;
+    //FILE *fp = fopen(outFileName.c_str(), "wb");
+    //if (! fp)
+    //{
+    //    Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
+    //        if (this->_delegate)
+    //            this->_delegate->onError(ErrorCode::CREATE_FILE);
+    //    });
+    //    CCLOG("can not create file %s", outFileName.c_str());
+    //    return false;
+    //}
+    //
+    //// Download pacakge
+    //CURLcode res;
+    //curl_easy_setopt(_curl, CURLOPT_URL, _packageUrl.c_str());
+    //curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, downLoadPackage);
+    //curl_easy_setopt(_curl, CURLOPT_WRITEDATA, fp);
+    //curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, false);
+    //curl_easy_setopt(_curl, CURLOPT_PROGRESSFUNCTION, assetsManagerProgressFunc);
+    //curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, this);
+    //curl_easy_setopt(_curl, CURLOPT_NOSIGNAL, 1L);
+    //curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_LIMIT, LOW_SPEED_LIMIT);
+    //curl_easy_setopt(_curl, CURLOPT_LOW_SPEED_TIME, LOW_SPEED_TIME);
+    //curl_easy_setopt(_curl, CURLOPT_FOLLOWLOCATION, 1 );
 
-    res = curl_easy_perform(_curl);
-    curl_easy_cleanup(_curl);
-    if (res != 0)
-    {
-        Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
-            if (this->_delegate)
-                this->_delegate->onError(ErrorCode::NETWORK);
-        });
-        CCLOG("error when download package");
-        fclose(fp);
-        return false;
-    }
-    
-    CCLOG("succeed downloading package %s", _packageUrl.c_str());
-    
-    fclose(fp);
+    //res = curl_easy_perform(_curl);
+    //curl_easy_cleanup(_curl);
+    //if (res != 0)
+    //{
+    //    Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, this]{
+    //        if (this->_delegate)
+    //            this->_delegate->onError(ErrorCode::NETWORK);
+    //    });
+    //    CCLOG("error when download package");
+    //    fclose(fp);
+    //    return false;
+    //}
+    //
+    //CCLOG("succeed downloading package %s", _packageUrl.c_str());
+    //
+    //fclose(fp);
     return true;
 }
 
