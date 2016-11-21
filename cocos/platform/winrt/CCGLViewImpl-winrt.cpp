@@ -71,7 +71,7 @@ GLViewImpl* GLViewImpl::create(const std::string& viewName)
 
 GLViewImpl::GLViewImpl()
 	: _frameZoomFactor(1.0f)
-	, _supportTouch(true)
+	, _supportTouch(false)	// TODO - sheado - xbox
     , _isRetina(false)
 	, m_lastPointValid(false)
 	, m_running(false)

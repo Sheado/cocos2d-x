@@ -12,7 +12,7 @@
 
 //#include "CCGLViewImpl-desktop.h"
 #include "cocos2d.h"
-//#include <SDL.h>
+#include <SDL.h>
 static const float AXIS_MAX = 32767.0f;
 
 
@@ -40,7 +40,7 @@ void ControllerImpl::close()
 	{
 		if (controllers[i])
 		{
-			//SDL_GameControllerClose(controllers[i]);
+			SDL_GameControllerClose(controllers[i]);
 			controllers[i] = NULL;
 		}
 	}
@@ -55,18 +55,18 @@ void ControllerImpl::init()
 	controllers[1] = NULL;
 	// TODO - cleanup 
 	int controllerIndex = 0;
-//	for (int i = 0; i < SDL_NumJoysticks(); ++i)
-//	{
-//		if (SDL_IsGameController(i))
-//		{
-//			SDL_GameController *controller = SDL_GameControllerOpen(i);
-//			controllers[controllerIndex] = controller;
-////			log("Opened Joystick %d on %d\n", i, controllerIndex);
-////			log("Name: %s\n", SDL_GameControllerName(controller));
-//			if (++controllerIndex >= 2)
-//				break;
-//		}
-//	}
+	for (int i = 0; i < SDL_NumJoysticks(); ++i)
+	{
+		if (SDL_IsGameController(i))
+		{
+			SDL_GameController *controller = SDL_GameControllerOpen(i);
+			controllers[controllerIndex] = controller;
+//			log("Opened Joystick %d on %d\n", i, controllerIndex);
+//			log("Name: %s\n", SDL_GameControllerName(controller));
+			if (++controllerIndex >= 2)
+				break;
+		}
+	}
 }
 
 /**

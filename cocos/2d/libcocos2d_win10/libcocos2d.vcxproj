@@ -1078,17 +1078,23 @@
       <PreprocessorDefinitions>_USRDLL;_LIB;COCOS2DXWIN32_EXPORTS;_USE3DDLL;_EXPORT_DLL_;_USRSTUDIODLL;_USREXDLL;_USEGUIDLL;_DEBUG;COCOS2D_DEBUG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <DisableSpecificWarnings>4458;4459;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(EngineRoot)cocos\editor-support;$(EngineRoot)cocos\platform;$(EngineRoot)cocos\platform\winrt;$(EngineRoot)external\win10-specific\zlib\include;$(EngineRoot)external\sdl\include\win32;$(EngineRoot)external\freetype2\include\win10;$(EngineRoot)external\jpeg\include\win32;$(EngineRoot)external\png\include\win32;$(EngineRoot)external\freetype2\include\win10\freetype2;$(EngineRoot)external\protobuf-lite\src;$(EngineRoot)external\protobuf-lite\win32;$(EngineRoot)external\win10-specific\OggDecoder\include;$(EngineRoot)external\websockets\include\win10;$(EngineRoot)external\glfw3\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EngineRoot)cocos\editor-support;$(EngineRoot)cocos\platform;$(EngineRoot)cocos\platform\winrt;$(EngineRoot)external\win10-specific\zlib\include;$(EngineRoot)external\sdl\include\winrt;$(EngineRoot)external\freetype2\include\win10;$(EngineRoot)external\jpeg\include\win32;$(EngineRoot)external\png\include\win32;$(EngineRoot)external\freetype2\include\win10\freetype2;$(EngineRoot)external\protobuf-lite\src;$(EngineRoot)external\protobuf-lite\win32;$(EngineRoot)external\win10-specific\OggDecoder\include;$(EngineRoot)external\websockets\include\win10;$(EngineRoot)external\glfw3\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm384 /bigobj %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <IgnoreSpecificDefaultLibraries>kernel32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>glfw3.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;libGLESv2.lib;libEGL.lib;ws2_32.lib;libwebsockets.lib;zlib.lib;freetype.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;dxguid.lib;xaudio2.lib;mfcore.lib;mfplat.lib;mfreadwrite.lib;mfuuid.lib;msxml6.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(EngineRoot)external\sdl\prebuilt\win32;$(EngineRoot)external\png\prebuilt\win32;$(EngineRoot)external\jpeg\prebuilt\win32;$(EngineRoot)external\glfw3\prebuilt\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;glfw3.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;libGLESv2.lib;libEGL.lib;ws2_32.lib;libwebsockets.lib;zlib.lib;freetype.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;dxguid.lib;xaudio2.lib;mfcore.lib;mfplat.lib;mfreadwrite.lib;mfuuid.lib;msxml6.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(EngineRoot)external\sdl\prebuilt\winrt;$(EngineRoot)external\png\prebuilt\win32;$(EngineRoot)external\jpeg\prebuilt\win32;$(EngineRoot)external\glfw3\prebuilt\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShowProgress>LinkVerbose</ShowProgress>
+      <LinkStatus>true</LinkStatus>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
