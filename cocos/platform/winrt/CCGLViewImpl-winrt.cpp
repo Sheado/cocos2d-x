@@ -31,6 +31,9 @@ THE SOFTWARE.
 #include "CCApplication.h"
 #include "CCWinRTUtils.h"
 #include "deprecated/CCNotificationCenter.h"
+#include "desktop/CCController-desktop.h"
+#include <SDL.h>
+#include <SDL_main.h>
 
 using namespace Platform;
 using namespace Concurrency;
@@ -84,6 +87,14 @@ GLViewImpl::GLViewImpl()
 {
 	s_pEglView = this;
     _viewName =  "cocos2dx";
+
+	// init SDL controller & audio support
+	SDL_SetMainReady();
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0)
+	{
+		log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+	}
+	controllerManager.init();
 }
 
 GLViewImpl::~GLViewImpl()
@@ -92,6 +103,8 @@ GLViewImpl::~GLViewImpl()
     s_pEglView = NULL;
 
 	// TODO: cleanup 
+	// TODO - sheado - xbox
+	SDL_Quit();
 }
 
 bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor)
@@ -326,6 +339,9 @@ void GLViewImpl::OnRendering()
 	if(m_running && m_initialized)
 	{
         Director::getInstance()->mainLoop();
+		// TODO - sheado - xbox - is this the run loop?
+		//log("polling\n");
+		controllerManager.pollJoysticks();
 	}
 }
 

@@ -166,6 +166,9 @@ private:
     Platform::Agile<Windows::UI::Core::CoreDispatcher> m_dispatcher;
     Platform::Agile<Windows::UI::Xaml::Controls::Panel> m_panel;
     KeyBoardWinRT^ m_keyboard;
+
+	// TODO - sheado - xbox
+	ControllerImpl controllerManager;
 };
 
 NS_CC_END

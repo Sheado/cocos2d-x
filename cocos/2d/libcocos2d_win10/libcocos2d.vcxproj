@@ -1093,7 +1093,8 @@
       <LinkTimeCodeGeneration>
       </LinkTimeCodeGeneration>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ShowProgress>LinkVerbose</ShowProgress>
+      <ShowProgress>
+      </ShowProgress>
       <LinkStatus>true</LinkStatus>
     </Link>
   </ItemDefinitionGroup>
