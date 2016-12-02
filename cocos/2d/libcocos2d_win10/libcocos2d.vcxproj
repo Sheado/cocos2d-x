@@ -1095,7 +1095,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ShowProgress>
       </ShowProgress>
-      <LinkStatus>true</LinkStatus>
+      <LinkStatus>
+      </LinkStatus>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

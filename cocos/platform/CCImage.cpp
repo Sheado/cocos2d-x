@@ -2440,10 +2440,11 @@ bool Image::saveImageToJPG(const std::string& filePath)
 
 void Image::premultipliedAlpha()
 {
-#if CC_ENABLE_PREMULTIPLIED_ALPHA == 0
-        _hasPremultipliedAlpha = false;
-        return;
-#else
+	// sheado - xbox - enabled premultiplied alpha
+//#if CC_ENABLE_PREMULTIPLIED_ALPHA == 0
+//	_hasPremultipliedAlpha = false;
+//	return;
+//#else
     CCASSERT(_renderFormat == Texture2D::PixelFormat::RGBA8888, "The pixel format should be RGBA8888!");
     
     unsigned int* fourBytes = (unsigned int*)_data;
@@ -2454,7 +2455,7 @@ void Image::premultipliedAlpha()
     }
     
     _hasPremultipliedAlpha = true;
-#endif
+//#endif
 }
 
 

@@ -197,8 +197,8 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
     if (data)
     {
         ret.fastSet(data, dataLen);
-        hasPremultipliedAlpha = false;
-    }
+		hasPremultipliedAlpha = false;
+	}
 
     return ret;
 }
