@@ -1088,7 +1088,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <IgnoreSpecificDefaultLibraries>kernel32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>SDL2.lib;glfw3.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;libGLESv2.lib;libEGL.lib;ws2_32.lib;libwebsockets.lib;zlib.lib;freetype.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;dxguid.lib;xaudio2.lib;mfcore.lib;mfplat.lib;mfreadwrite.lib;mfuuid.lib;msxml6.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2_mixer.lib;glfw3.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;libGLESv2.lib;libEGL.lib;ws2_32.lib;libwebsockets.lib;zlib.lib;freetype.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;dxguid.lib;xaudio2.lib;mfcore.lib;mfplat.lib;mfreadwrite.lib;mfuuid.lib;msxml6.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(EngineRoot)external\sdl\prebuilt\winrt;$(EngineRoot)external\png\prebuilt\win32;$(EngineRoot)external\jpeg\prebuilt\win32;$(EngineRoot)external\glfw3\prebuilt\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>
       </LinkTimeCodeGeneration>

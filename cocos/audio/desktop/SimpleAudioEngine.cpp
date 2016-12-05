@@ -26,22 +26,22 @@ THE SOFTWARE.
 #include <unordered_map>
 #include <string>
 #include "platform/CCFileUtils.h"
-//#include "SDL_mixer.h"
+#include "SDL_mixer.h"
 
 using namespace cocos2d;
 using namespace std;
 
 static bool isSimpleAudioInitialized = false;
-//static Mix_Music* currentMusic = NULL;  // only one song allowed at a time, therefore we can safely keep this reference here
+static Mix_Music* currentMusic = NULL;  // only one song allowed at a time, therefore we can safely keep this reference here
 
 static void static_init()
 {
     if( !isSimpleAudioInitialized )
     {
-  //      Mix_Init(MIX_INIT_OGG);
-		//Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
-  //      Mix_AllocateChannels(24);
-		//isSimpleAudioInitialized = true;
+        Mix_Init(MIX_INIT_OGG);
+		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
+        Mix_AllocateChannels(24);
+		isSimpleAudioInitialized = true;
     }
 }
 
@@ -54,14 +54,14 @@ static void static_preloadBackgroundMusic(const char* pszFilePath)
     if( pszFilePath == NULL || strlen( pszFilePath ) <= 0 )
         return;
 
-    //if( currentMusic )
-    //{
-    //    Mix_FreeMusic( currentMusic );
-    //    currentMusic = NULL;
-    //}
-    //currentMusic = Mix_LoadMUS( pszFilePath );
-	//if (!currentMusic)
-	//	log("Mix_LoadMUS(\"%s\"): %s\n", pszFilePath, Mix_GetError());
+    if( currentMusic )
+    {
+        Mix_FreeMusic( currentMusic );
+        currentMusic = NULL;
+    }
+    currentMusic = Mix_LoadMUS( pszFilePath );
+	if (!currentMusic)
+		log("Mix_LoadMUS(\"%s\"): %s\n", pszFilePath, Mix_GetError());
 }
 
 static void static_playBackgroundMusic(const char* pszFilePath, bool bLoop)
@@ -69,13 +69,13 @@ static void static_playBackgroundMusic(const char* pszFilePath, bool bLoop)
     if( pszFilePath == NULL || strlen( pszFilePath ) <= 0 )
         return;
     
-    //if( currentMusic )
-    //    Mix_PlayMusic(currentMusic, -1);
+    if( currentMusic )
+        Mix_PlayMusic(currentMusic, -1);
 }
 
 static void static_stopBackgroundMusic()
 {
-    //Mix_HaltMusic();
+    Mix_HaltMusic();
 }
 
 static void static_pauseBackgroundMusic()
@@ -101,7 +101,7 @@ static bool static_willPlayBackgroundMusic()
 
 static bool static_isBackgroundMusicPlaying()
 {
-    //return Mix_PlayingMusic();
+    return Mix_PlayingMusic();
 	return false;
 }
 
@@ -114,8 +114,8 @@ static float static_getBackgroundMusicVolume()
 static void static_setBackgroundMusicVolume(float volume)
 {
     volume = MAX( MIN(volume, 1.0), 0 );
-    //volume *= MIX_MAX_VOLUME;
-    //Mix_VolumeMusic( volume );
+    volume *= MIX_MAX_VOLUME;
+    Mix_VolumeMusic( volume );
 }
      
 static float static_getEffectsVolume()
@@ -127,8 +127,8 @@ static float static_getEffectsVolume()
 static void static_setEffectsVolume(float volume)
 {
     volume = MAX( MIN(volume, 1.0), 0 );
-    //volume *= MIX_MAX_VOLUME;
-    //Mix_Volume(-1,volume);
+    volume *= MIX_MAX_VOLUME;
+    Mix_Volume(-1,volume);
 }
 
 static void static_unloadEffect(const char* pszFilePath)
@@ -159,7 +159,7 @@ static void static_resumeAllEffects()
 namespace CocosDenshion {
 
 static SimpleAudioEngine *s_pEngine;
-//static unordered_map<string,Mix_Chunk*> audioChunkMap;
+static unordered_map<string,Mix_Chunk*> audioChunkMap;
     
     
 SimpleAudioEngine::SimpleAudioEngine()
@@ -265,38 +265,38 @@ unsigned int SimpleAudioEngine::playEffect(const char *pszFilePath, bool bLoop, 
 {
 	const int INVALID_CHANNEL = 9999;
 	int channel = INVALID_CHANNEL;
-   // // Changing file path to full path
-   // std::string fullPath = FileUtils::getInstance()->fullPathForFilename(pszFilePath);
-   // auto it = audioChunkMap.find(pszFilePath);
-   // if( it != audioChunkMap.end() )
-   // {
-   //     Mix_Chunk* chunk = it->second;
-   //     if( chunk )
-   //     {
-   //         int loop = 0;
-   //         if( bLoop )
-   //             loop = -1;
+    // Changing file path to full path
+    std::string fullPath = FileUtils::getInstance()->fullPathForFilename(pszFilePath);
+    auto it = audioChunkMap.find(pszFilePath);
+    if( it != audioChunkMap.end() )
+    {
+        Mix_Chunk* chunk = it->second;
+        if( chunk )
+        {
+            int loop = 0;
+            if( bLoop )
+                loop = -1;
 
-			//channel = Mix_PlayChannel(-1, chunk, loop);
-			//if (channel < 0)
-			//	channel = INVALID_CHANNEL;
-   //     }
-   // }
+			channel = Mix_PlayChannel(-1, chunk, loop);
+			if (channel < 0)
+				channel = INVALID_CHANNEL;
+        }
+    }
 
 	return channel;
 }
 
 void SimpleAudioEngine::preloadEffect(const char* pszFilePath)
 {
-	//auto it = audioChunkMap.find(pszFilePath);
-	//if (it == audioChunkMap.end())
-	//{
-	//	// Changing file path to full path
-	//	std::string fullPath = FileUtils::getInstance()->fullPathForFilename(pszFilePath);
-	//	Mix_Chunk* chunk = Mix_LoadWAV(fullPath.data());
-	//	if (chunk)
-	//		audioChunkMap.insert({ pszFilePath, chunk });
-	//}
+	auto it = audioChunkMap.find(pszFilePath);
+	if (it == audioChunkMap.end())
+	{
+		// Changing file path to full path
+		std::string fullPath = FileUtils::getInstance()->fullPathForFilename(pszFilePath);
+		Mix_Chunk* chunk = Mix_LoadWAV(fullPath.data());
+		if (chunk)
+			audioChunkMap.insert({ pszFilePath, chunk });
+	}
 }
 
 void SimpleAudioEngine::unloadEffect(const char* pszFilePath)
@@ -328,11 +328,11 @@ void SimpleAudioEngine::resumeAllEffects()
 
 void SimpleAudioEngine::stopEffect(unsigned int nSoundId)
 {
-	//Mix_HaltChannel(nSoundId);
+	Mix_HaltChannel(nSoundId);
 }
 
 void SimpleAudioEngine::stopAllEffects()
 {
-	//Mix_HaltChannel(-1);
+	Mix_HaltChannel(-1);
 }
 }
