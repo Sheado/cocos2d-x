@@ -201,6 +201,7 @@ bool GLViewImpl::isOpenGLReady()
 void GLViewImpl::end()
 {
 	m_windowClosed = true;
+	m_running = false;
 }
 
 
@@ -339,9 +340,8 @@ void GLViewImpl::OnRendering()
 	if(m_running && m_initialized)
 	{
         Director::getInstance()->mainLoop();
-		// TODO - sheado - xbox - is this the run loop?
-		//log("polling\n");
-		controllerManager.pollJoysticks();
+		if( m_running ) 
+			controllerManager.pollJoysticks();
 	}
 }
 

@@ -49,6 +49,7 @@ class CC_DLL GLViewImpl : public GLView
 public:
     static GLViewImpl* create(const std::string& viewName);
 
+	bool AppShouldExit() { return m_windowClosed; }
     /* override functions */
     virtual bool isOpenGLReady();
     virtual void end();

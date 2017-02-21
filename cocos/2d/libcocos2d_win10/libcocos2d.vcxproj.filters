@@ -2713,5 +2713,6 @@
     <None Include="..\..\3d\CCAnimationCurve.inl">
       <Filter>3d</Filter>
     </None>
+    <None Include="..\..\..\external\win10-specific\zlib\prebuilt\Win32\zlib.dll" />
   </ItemGroup>
 </Project>
